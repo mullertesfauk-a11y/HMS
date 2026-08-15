@@ -1,0 +1,358 @@
+// Prisma schema for the Hotel Reservation System.
+//
+// Note (Prisma 7): the datasource block intentionally has NO `url` property.
+// Connection details live in `prisma.config.ts` (CLI / migrations use DIRECT_URL)
+// and in `src/lib/db/prisma.ts` (runtime uses the pooled DATABASE_URL via the
+// Neon driver adapter).
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  ADMIN
+  STAFF
+}
+
+enum UserStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum RoomTypeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  OUT_OF_SERVICE
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+  NO_SHOW
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CARD
+  ONLINE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum GuestDocumentType {
+  PASSPORT
+  NATIONAL_ID
+  DRIVERS_LICENSE
+  OTHER
+}
+
+// ---------------------------------------------------------------------------
+// Authentication (Better Auth core models)
+// ---------------------------------------------------------------------------
+
+model User {
+  id            String     @id
+  name          String
+  email         String     @unique
+  emailVerified Boolean    @default(false)
+  image         String?
+  role          UserRole   @default(STAFF)
+  status        UserStatus @default(ACTIVE)
+  // Better Auth admin plugin fields (ban management).
+  banned        Boolean    @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  sessions             Session[]
+  accounts             Account[]
+  createdReservations  Reservation[] @relation("ReservationCreatedBy")
+  auditLogs            AuditLog[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+// ---------------------------------------------------------------------------
+// Hotel domain
+// ---------------------------------------------------------------------------
+
+model Hotel {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String?
+  address      String?
+  city         String?
+  country      String?
+  phone        String?
+  email        String?
+  currency     String
+  timezone     String
+  checkInTime  String
+  checkOutTime String
+  taxRate      Decimal  @default(0) @db.Decimal(5, 2)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  roomTypes    RoomType[]
+  rooms        Room[]
+  reservations Reservation[]
+}
+
+model Amenity {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  icon      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  roomTypeAmenities RoomTypeAmenity[]
+
+  @@index([name])
+}
+
+model RoomTypeAmenity {
+  id          String   @id @default(cuid())
+  roomTypeId  String
+  amenityId   String
+  createdAt   DateTime @default(now())
+
+  roomType RoomType @relation(fields: [roomTypeId], references: [id], onDelete: Cascade)
+  amenity  Amenity  @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+
+  @@unique([roomTypeId, amenityId])
+}
+
+model RoomType {
+  id          String         @id @default(cuid())
+  hotelId     String
+  name        String
+  slug        String
+  description String?
+  capacity    Int
+  maxAdults   Int
+  maxChildren Int
+  bedType     String
+  size        String?
+  basePrice   Decimal        @db.Decimal(12, 2)
+  status      RoomTypeStatus @default(ACTIVE)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  hotel            Hotel             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  rooms            Room[]
+  reservationRooms ReservationRoom[]
+  amenities        RoomTypeAmenity[]
+
+  @@unique([hotelId, slug])
+  @@index([hotelId, status])
+}
+
+model Room {
+  id         String     @id @default(cuid())
+  hotelId    String
+  roomTypeId String
+  roomNumber String
+  floor      Int?
+  status     RoomStatus @default(AVAILABLE)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  hotel            Hotel             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  roomType         RoomType          @relation(fields: [roomTypeId], references: [id], onDelete: Restrict)
+  reservationRooms ReservationRoom[]
+
+  @@unique([hotelId, roomNumber])
+  @@index([hotelId, roomTypeId, status])
+  @@index([roomTypeId])
+}
+
+model Guest {
+  id             String            @id @default(cuid())
+  firstName      String
+  lastName       String
+  email          String?
+  phone          String?
+  country        String?
+  documentType   GuestDocumentType?
+  documentNumber String?
+  specialNotes   String?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+
+  reservations Reservation[]
+
+  @@index([email])
+  @@index([lastName, firstName])
+}
+
+model Reservation {
+  id                String            @id @default(cuid())
+  reservationNumber String            @unique
+  hotelId           String
+  guestId           String
+  checkIn           DateTime          @db.Date
+  checkOut          DateTime          @db.Date
+  adults            Int
+  children          Int               @default(0)
+  status            ReservationStatus @default(PENDING)
+  subtotal          Decimal           @db.Decimal(12, 2)
+  tax               Decimal           @db.Decimal(12, 2)
+  discount          Decimal           @db.Decimal(12, 2) @default(0)
+  total             Decimal           @db.Decimal(12, 2)
+  currency          String
+  specialRequests   String?
+  createdById       String?
+  cancelledAt       DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  hotel            Hotel             @relation(fields: [hotelId], references: [id], onDelete: Restrict)
+  guest            Guest             @relation(fields: [guestId], references: [id], onDelete: Restrict)
+  createdBy        User?             @relation("ReservationCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  rooms            ReservationRoom[]
+  payments         Payment[]
+  auditLogs        AuditLog[]
+
+  @@index([hotelId, status])
+  @@index([hotelId, checkIn, checkOut])
+  @@index([status, checkIn, checkOut])
+  @@index([guestId])
+  @@index([createdById])
+  @@index([createdAt])
+}
+
+// Junction between a reservation and a room (or room type when no physical
+// room has been assigned yet). The public website books a RoomType; hotel
+// staff may later assign a physical Room. `roomId` is nullable to support
+// unassigned / tentative holds without exposing room numbers publicly.
+model ReservationRoom {
+  id             String   @id @default(cuid())
+  reservationId  String
+  roomTypeId     String
+  roomId         String?
+  pricePerNight  Decimal  @db.Decimal(12, 2)
+  numberOfNights Int
+  subtotal       Decimal  @db.Decimal(12, 2)
+  createdAt      DateTime @default(now())
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  roomType    RoomType    @relation(fields: [roomTypeId], references: [id], onDelete: Restrict)
+  room        Room?       @relation(fields: [roomId], references: [id], onDelete: SetNull)
+
+  @@index([roomId])
+  @@index([roomTypeId])
+  @@index([reservationId])
+}
+
+model Payment {
+  id                   String        @id @default(cuid())
+  reservationId        String
+  amount               Decimal       @db.Decimal(12, 2)
+  currency             String
+  method               PaymentMethod
+  status               PaymentStatus @default(PENDING)
+  transactionReference String?
+  paidAt               DateTime?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+
+  @@index([reservationId])
+  @@index([status])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  userId        String?
+  reservationId String?
+  action        String
+  entity        String
+  entityId      String?
+  oldData       Json?
+  newData       Json?
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+
+  user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  reservation Reservation? @relation(fields: [reservationId], references: [id], onDelete: SetNull)
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([reservationId])
+  @@index([createdAt])
+}

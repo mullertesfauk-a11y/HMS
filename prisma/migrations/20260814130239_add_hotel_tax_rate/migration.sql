@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Hotel" ADD COLUMN     "taxRate" DECIMAL(5,2) NOT NULL DEFAULT 0;
