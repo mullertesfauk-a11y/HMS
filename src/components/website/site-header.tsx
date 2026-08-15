@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 
 import type { PublicHotel } from "@/server/services/hotel.service";
+import { HotelLogo } from "@/components/ui/hotel-logo";
 
 /**
  * Public website header: brand mark, primary navigation, and a discreet link
@@ -15,17 +16,16 @@ export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200 bg-white/90 backdrop-blur-md transition-all duration-300">
+    <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 backdrop-blur-md transition-all duration-300">
       <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-8">
-        <Link href="/" className="flex items-center gap-3 group">
-          <span
-            aria-hidden
-            className="flex h-10 w-10 items-center justify-center rounded-sm bg-brand text-lg font-serif text-white transition-colors group-hover:bg-brand-dark"
-          >
-            {hotel.name.charAt(0)}
-          </span>
-          <span className="text-lg font-display tracking-wide text-foreground">{hotel.name}</span>
-        </Link>
+        <HotelLogo
+          name={hotel.name || "GURJA"}
+          subtitle="HOTEL"
+          variant="dark"
+          size="md"
+          layout="stacked"
+          href="/"
+        />
 
         <nav aria-label="Main navigation" className="hidden items-center gap-6 md:flex">
           {nav.map((item) => (

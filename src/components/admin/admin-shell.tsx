@@ -10,6 +10,7 @@ import {
   DoorOpen,
   LayoutDashboard,
   LogOut,
+  QrCode,
   Settings,
   Users,
   type LucideIcon,
@@ -18,6 +19,7 @@ import {
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils/cn";
 import { statusMeta } from "@/lib/domain/labels";
+import { HotelLogo } from "@/components/ui/hotel-logo";
 
 interface NavItem {
   href: string;
@@ -34,6 +36,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/room-types", label: "Room types", icon: BedDouble },
   { href: "/admin/guests", label: "Guests", icon: Users },
   { href: "/admin/staff", label: "Staff", icon: ConciergeBell },
+  { href: "/table-qr", label: "Table QR Cards", icon: QrCode },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
@@ -61,17 +64,15 @@ export function AdminShell({
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <aside className="fixed inset-y-0 left-0 z-20 flex w-60 flex-col border-r border-stone-200 bg-white">
-        <div className="flex h-16 items-center gap-2.5 border-b border-stone-100 px-5">
-          <span
-            aria-hidden
-            className="flex h-8 w-8 items-center justify-center rounded-md bg-brand text-sm font-semibold text-white"
-          >
-            {hotelName.charAt(0)}
-          </span>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-foreground">{hotelName}</p>
-            <p className="text-xs text-stone-500">Property management</p>
-          </div>
+        <div className="flex h-20 items-center justify-between border-b border-stone-100 px-5">
+          <HotelLogo
+            name={hotelName || "GURJA"}
+            subtitle="MANAGEMENT"
+            variant="dark"
+            size="sm"
+            layout="left-stacked"
+            href="/admin/dashboard"
+          />
         </div>
 
         <nav aria-label="Admin navigation" className="flex-1 overflow-y-auto px-3 py-4">

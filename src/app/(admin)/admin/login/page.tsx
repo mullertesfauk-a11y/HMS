@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { HotelLogo } from "@/components/ui/hotel-logo";
 import { authClient } from "@/lib/auth-client";
 
 /**
@@ -40,16 +41,18 @@ export default function AdminLoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-stone-50 px-4">
       <div className="w-full max-w-sm">
-        <div className="mb-6 text-center">
-          <span
-            aria-hidden
-            className="mx-auto flex h-11 w-11 items-center justify-center rounded-lg bg-brand text-lg font-semibold text-white"
-          >
-            GM
-          </span>
-          <h1 className="mt-4 text-xl font-semibold text-foreground">Staff sign in</h1>
-          <p className="mt-1 text-sm text-stone-500">
-            Grand Meridian property management
+        <div className="mb-8 text-center flex flex-col items-center">
+          <HotelLogo
+            name="GURJA"
+            subtitle="PROPERTY MANAGEMENT"
+            variant="dark"
+            size="lg"
+            layout="stacked"
+            href="/"
+          />
+          <h1 className="mt-6 text-lg font-semibold text-foreground">Staff Sign In</h1>
+          <p className="mt-1 text-xs text-stone-500">
+            Access hotel administration &amp; front desk portal
           </p>
         </div>
 

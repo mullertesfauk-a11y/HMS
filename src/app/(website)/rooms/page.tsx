@@ -73,11 +73,21 @@ export default async function RoomsPage({
 
   return (
     <div className="bg-surface">
-      <div className="bg-stone-950 py-16 sm:py-24">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-8 text-center">
-          <h1 className="font-display text-4xl text-white sm:text-5xl lg:text-6xl">Rooms &amp; Suites</h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-stone-300">
-            {hasDates ? "Available rooms for your selected dates." : "Discover the perfect space for your stay."}
+      <div className="relative overflow-hidden bg-stone-950 py-20 sm:py-28">
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/70 to-stone-950/40 z-0" />
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 sm:px-8 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-stone-900/70 px-4 py-1 backdrop-blur-md">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-200">
+              Gurja Hotel · Shire, Tigray
+            </span>
+          </div>
+          <h1 className="mt-4 font-luxury text-3xl font-normal uppercase tracking-[0.18em] text-white sm:text-5xl lg:text-6xl">
+            Suites &amp; Accommodations
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm sm:text-base text-stone-300">
+            {hasDates
+              ? "Available suites for your selected dates."
+              : "Discover our curated collection of luxury private sanctuaries in Shire, Tigray."}
           </p>
         </div>
       </div>

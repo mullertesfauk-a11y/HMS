@@ -28,15 +28,15 @@ const prisma = new PrismaClient({
 });
 
 const HOTEL = {
-  name: "Grand Meridian Hotel",
-  slug: "grand-meridian",
+  name: "Gurja Hotel",
+  slug: "gurja-hotel",
   description:
-    "A full-service city hotel with modern rooms, dining, and conference facilities.",
-  address: "Bole Road, Kazanchis",
-  city: "Addis Ababa",
+    "A prestigious sanctuary of refined luxury, curated suites, exquisite dining, and elevated Ethiopian hospitality in Shire, Tigray.",
+  address: "Central Shire",
+  city: "Shire, Tigray",
   country: "Ethiopia",
-  phone: "+251 11 000 0000",
-  email: "reservations@grandmeridian.example",
+  phone: "+251 34 000 0000",
+  email: "reservations@gurjahotel.example",
   currency: "ETB",
   timezone: "Africa/Addis_Ababa",
   checkInTime: "14:00",

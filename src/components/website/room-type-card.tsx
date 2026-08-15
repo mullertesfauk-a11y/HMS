@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, BedDouble, Ruler } from "lucide-react";
+import { ArrowRight, BedDouble, Ruler, Users, Sparkles } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -49,66 +49,82 @@ export function RoomTypeCard({
   const priceLabel = stayTotal !== undefined && nights ? formatMoney(stayTotal, currency) : null;
 
   return (
-    <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-md">
-      <Link href={`/rooms/${slug}${query}`} className="relative aspect-[4/3] w-full overflow-hidden bg-stone-100">
+    <Card className="group flex flex-col overflow-hidden rounded-xl border border-stone-200/80 bg-white shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-900/5 hover:border-brand-brass/40">
+      <Link href={`/rooms/${slug}${query}`} className="relative aspect-[16/11] w-full overflow-hidden bg-stone-100">
         <div
-          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
           style={{ backgroundImage: `url('${photo}')` }}
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-stone-950/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        
         {availableRooms !== undefined && availableRooms <= 3 ? (
           <div className="absolute left-4 top-4 z-10">
-            <Badge variant={availableRooms === 0 ? "red" : "amber"} className="shadow-sm">
-              {availableRooms === 0 ? "Fully booked" : `Only ${availableRooms} left`}
+            <Badge variant={availableRooms === 0 ? "red" : "amber"} className="shadow-md font-medium tracking-wider uppercase text-[10px]">
+              {availableRooms === 0 ? "Fully Booked" : `Only ${availableRooms} Available`}
             </Badge>
           </div>
-        ) : null}
+        ) : (
+          <div className="absolute right-4 top-4 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <span className="inline-flex items-center gap-1 rounded-full bg-stone-900/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-200 backdrop-blur-md">
+              <Sparkles className="h-3 w-3 text-amber-300" />
+              <span>Bespoke</span>
+            </span>
+          </div>
+        )}
       </Link>
-      <CardContent className="flex flex-1 flex-col p-6">
-        <div className="mb-2 flex items-center justify-between">
+      
+      <CardContent className="flex flex-1 flex-col p-6 sm:p-7">
+        <div className="mb-2">
           <Link href={`/rooms/${slug}${query}`}>
-            <h3 className="font-display text-2xl text-foreground transition-colors group-hover:text-brand">{name}</h3>
+            <h3 className="font-luxury text-xl sm:text-2xl font-semibold tracking-wide text-stone-900 transition-colors group-hover:text-brand">
+              {name}
+            </h3>
           </Link>
         </div>
 
         <p className="line-clamp-2 text-sm leading-relaxed text-stone-500">
-          {description ?? "A comfortable room for your stay."}
+          {description ?? "An exquisitely appointed retreat crafted with artisanal details and lavish comfort."}
         </p>
 
-        <div className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-sm text-stone-600">
+        {/* Room Specs */}
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-stone-100 pt-4 text-xs font-medium text-stone-600">
           <span className="inline-flex items-center gap-1.5">
-            <BedDouble aria-hidden className="h-4 w-4 text-stone-400" />
+            <BedDouble aria-hidden className="h-3.5 w-3.5 text-brand-brass" />
             {bedType}
           </span>
           {size ? (
             <span className="inline-flex items-center gap-1.5">
-              <Ruler aria-hidden className="h-4 w-4 text-stone-400" />
+              <Ruler aria-hidden className="h-3.5 w-3.5 text-brand-brass" />
               {size}
             </span>
           ) : null}
-          <span>
-            {maxAdults} Adult{maxAdults !== 1 ? "s" : ""}
-            {maxChildren > 0 ? ` · ${maxChildren} Child${maxChildren !== 1 ? "ren" : ""}` : ""}
+          <span className="inline-flex items-center gap-1.5">
+            <Users aria-hidden className="h-3.5 w-3.5 text-brand-brass" />
+            <span>
+              {maxAdults} Adult{maxAdults !== 1 ? "s" : ""}
+              {maxChildren > 0 ? ` · ${maxChildren} Child` : ""}
+            </span>
           </span>
         </div>
 
-        <div className="mt-auto pt-8">
+        {/* Pricing & CTA */}
+        <div className="mt-auto pt-6">
           <div className="flex items-end justify-between border-t border-stone-100 pt-4">
             <div>
-              <p className="text-xs uppercase tracking-widest text-stone-400">
-                {priceLabel ? "Stay total" : "Starting from"}
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-400">
+                {priceLabel ? `${nights} Nights Total` : "Per Night From"}
               </p>
-              <p className="mt-1 font-display text-xl text-foreground">
+              <p className="mt-0.5 font-luxury text-xl font-bold tracking-tight text-stone-900">
                 {priceLabel ?? formatMoney(basePrice, currency)}
-              </p>
-              <p className="text-xs text-stone-500">
-                {priceLabel ? `${nights} night${nights !== 1 ? "s" : ""}, taxes included` : "per night, plus taxes"}
+                {!priceLabel && <span className="ml-1 text-xs font-normal text-stone-500">/ night</span>}
               </p>
             </div>
             <Link
               href={`/rooms/${slug}${query}`}
-              className="inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-sm bg-stone-900 px-5 text-xs font-medium uppercase tracking-widest text-white transition-colors hover:bg-brand"
+              className="inline-flex h-9 items-center gap-1.5 rounded-sm bg-stone-900 px-4 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-brand"
             >
-              View Room
+              <span>View Suite</span>
+              <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
         </div>

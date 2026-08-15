@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cinzel, Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -13,6 +13,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const cinzel = Cinzel({
+  variable: "--font-cinzel",
+  subsets: ["latin"],
+  display: "swap",
+});
+
 const playfair = localFont({
   src: "../fonts/PlayfairDisplay-Variable.ttf",
   variable: "--font-playfair",
@@ -22,17 +28,17 @@ const playfair = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Hotel Reservation System",
-    template: "%s",
+    default: "Gurja Hotel",
+    template: "%s · Gurja Hotel",
   },
-  description: "Book rooms and manage reservations.",
+  description: "Experience luxury and warm hospitality at Gurja Hotel.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${cinzel.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

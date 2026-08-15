@@ -6,11 +6,11 @@ import { hotelService } from "@/server/services/hotel.service";
 
 export const metadata: Metadata = {
   title: {
-    default: "Grand Meridian Hotel",
-    template: "%s · Grand Meridian Hotel",
+    default: "Gurja Hotel",
+    template: "%s · Gurja Hotel",
   },
   description:
-    "Book your stay at Grand Meridian Hotel — modern rooms, city views, and warm hospitality.",
+    "Book your stay at Gurja Hotel — luxury suites, city views, and timeless Ethiopian hospitality.",
 };
 
 export default async function WebsiteLayout({ children }: { children: React.ReactNode }) {

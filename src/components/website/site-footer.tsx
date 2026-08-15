@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { PublicHotel } from "@/server/services/hotel.service";
+import { HotelLogo } from "@/components/ui/hotel-logo";
 
 /** Public website footer: contact details and check-in/out times. */
 export function SiteFooter({ hotel }: { hotel: PublicHotel }) {
@@ -11,18 +12,26 @@ export function SiteFooter({ hotel }: { hotel: PublicHotel }) {
   ].filter(Boolean);
 
   return (
-    <footer className="border-t border-stone-200 bg-stone-950 text-stone-400">
+    <footer className="border-t border-stone-800 bg-stone-950 text-stone-400">
       <div className="mx-auto grid w-full max-w-7xl gap-12 px-4 py-16 sm:grid-cols-2 lg:grid-cols-4 sm:px-8">
         <div className="lg:col-span-1">
-          <p className="font-display text-xl tracking-wide text-white">{hotel.name}</p>
-          <p className="mt-4 text-sm leading-relaxed">{hotel.description}</p>
+          <HotelLogo
+            name={hotel.name || "GURJA"}
+            subtitle="HOTEL"
+            variant="light"
+            size="md"
+            layout="left-stacked"
+            href="/"
+          />
+          <p className="mt-5 text-sm leading-relaxed text-stone-400">{hotel.description}</p>
         </div>
         
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-white">Hotel</p>
           <ul className="mt-6 space-y-3 text-sm">
-            <li><Link href="/rooms" className="transition-colors hover:text-brand-light">Rooms & Suites</Link></li>
+            <li><Link href="/rooms" className="transition-colors hover:text-brand-light">Rooms &amp; Suites</Link></li>
             <li><Link href="/reservation/lookup" className="transition-colors hover:text-brand-light">Find My Booking</Link></li>
+            <li><Link href="/table-qr" className="transition-colors hover:text-brand-light">Table QR Stand</Link></li>
           </ul>
         </div>
 
