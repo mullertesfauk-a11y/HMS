@@ -37,7 +37,7 @@ export default async function HomePage() {
   return (
     <>
       {/* Grand Luxury Hero Section */}
-      <section className="relative flex min-h-[92vh] items-center justify-center bg-stone-950 overflow-hidden pb-32 sm:pb-36 pt-16">
+      <section className="relative flex flex-col justify-center bg-stone-950 overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28 lg:pt-24 lg:pb-32 min-h-[75vh] sm:min-h-[82vh] lg:min-h-[88vh]">
         {/* Cinematic Backdrop Image */}
         <div className="absolute inset-0 z-0">
           <img
@@ -51,84 +51,83 @@ export default async function HomePage() {
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-4 text-center sm:px-8">
+        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center px-4 text-center sm:px-6 lg:px-8 my-auto">
           {/* Prestige Accolade Pill */}
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-amber-300/30 bg-stone-900/70 px-4 py-1.5 backdrop-blur-md shadow-lg shadow-black/40 animate-fade-in">
+          <div className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-stone-900/80 px-3.5 py-1 sm:px-4 sm:py-1.5 backdrop-blur-md shadow-lg shadow-black/40">
             <span className="flex h-2 w-2 items-center justify-center">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
             </span>
-            <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.28em] text-amber-200">
+            <span className="text-[9px] sm:text-xs font-semibold uppercase tracking-[0.2em] sm:tracking-[0.28em] text-amber-200">
               {hotel.city ? `${hotel.city} · ` : ""}Luxury Hotel &amp; Suites
             </span>
           </div>
 
-          {/* Stately Brand Title */}
+          {/* Stately Brand Title - Responsive Typography */}
           <h1
-            className="mt-6 font-luxury text-4xl font-normal uppercase tracking-[0.2em] text-white sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-md select-none"
-            style={{ marginRight: "-0.2em" }}
+            className="mt-4 sm:mt-6 font-luxury text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-normal uppercase tracking-[0.14em] sm:tracking-[0.18em] text-white drop-shadow-md select-none leading-tight"
           >
             {hotel.name || "GURJA HOTEL"}
           </h1>
 
           {/* Luxury Subtitle Lockup */}
-          <div className="mt-3 flex items-center justify-center gap-3">
-            <span className="hidden sm:block h-[1px] w-8 sm:w-12 bg-amber-300/50" />
-            <p className="text-xs sm:text-sm font-sans font-semibold uppercase tracking-[0.38em] text-amber-300/90">
+          <div className="mt-2.5 sm:mt-3 flex items-center justify-center gap-2 sm:gap-3">
+            <span className="hidden sm:block h-[1px] w-6 sm:w-10 bg-amber-300/50" />
+            <p className="text-[10px] sm:text-xs md:text-sm font-sans font-medium sm:font-semibold uppercase tracking-[0.24em] sm:tracking-[0.36em] text-amber-300/90">
               An Enclave of Refined Hospitality
             </p>
-            <span className="hidden sm:block h-[1px] w-8 sm:w-12 bg-amber-300/50" />
+            <span className="hidden sm:block h-[1px] w-6 sm:w-10 bg-amber-300/50" />
           </div>
 
           {/* Editorial Hook */}
-          <p className="mt-6 max-w-2xl text-base sm:text-lg font-light leading-relaxed text-stone-200/90 sm:leading-loose">
+          <p className="mt-4 sm:mt-6 max-w-2xl text-xs sm:text-base md:text-lg font-light leading-relaxed text-stone-200/90 px-2 sm:px-0">
             {hotel.description ??
               "Immerse yourself in a serene architectural sanctuary where bespoke suites, world-class dining, and timeless Ethiopian warmth converge."}
           </p>
 
-          {/* Action CTAs */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          {/* Action CTAs - Fluid on mobile & tablets */}
+          <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full sm:w-auto px-4 sm:px-0">
             <Link
               href="/rooms"
-              className="inline-flex h-12 items-center justify-center gap-2.5 rounded-sm bg-brand px-7 text-xs font-semibold uppercase tracking-widest text-white shadow-xl shadow-brand/20 transition-all duration-300 hover:bg-brand-dark hover:shadow-2xl"
+              className="inline-flex h-11 sm:h-12 w-full sm:w-auto items-center justify-center gap-2.5 rounded-sm bg-brand px-6 sm:px-7 text-xs font-semibold uppercase tracking-widest text-white shadow-xl shadow-brand/20 transition-all duration-300 hover:bg-brand-dark hover:shadow-2xl"
             >
               <span>Explore Suites</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
             <Link
               href="/reservation/lookup"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-sm border border-stone-200/30 bg-white/10 px-6 text-xs font-semibold uppercase tracking-widest text-stone-100 backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:text-white"
+              className="inline-flex h-11 sm:h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-sm border border-stone-200/30 bg-white/10 px-5 sm:px-6 text-xs font-semibold uppercase tracking-widest text-stone-100 backdrop-blur-md transition-all duration-300 hover:bg-white/20 hover:text-white"
             >
               <span>Find My Booking</span>
             </Link>
           </div>
         </div>
+      </section>
 
-        {/* Floating Concierge Booking Search Console */}
-        <div className="absolute -bottom-8 left-0 right-0 z-20 px-4 sm:px-8">
-          <div className="mx-auto max-w-5xl">
-            <AvailabilitySearch variant="card" />
-          </div>
+      {/* Floating Concierge Booking Search Console - Responsive overlap */}
+      <section className="relative z-20 -mt-10 sm:-mt-14 lg:-mt-16 px-4 sm:px-8">
+        <div className="mx-auto max-w-5xl">
+          <AvailabilitySearch variant="card" />
         </div>
       </section>
 
       {/* Prestige Trust Bar */}
-      <section className="border-b border-stone-200/60 bg-stone-50 pb-16 pt-24 sm:pt-28">
-        <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-8 px-4 text-center sm:gap-16 sm:px-8">
-          <div className="flex items-center gap-3">
-            <ShieldCheck className="h-5 w-5 text-brand" />
-            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-stone-700">
+      <section className="border-b border-stone-200/60 bg-stone-50 pb-12 pt-14 sm:pb-16 sm:pt-16">
+        <div className="mx-auto flex max-w-7xl flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 lg:gap-16 px-4 text-center sm:px-8">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <ShieldCheck className="h-4 sm:h-5 w-4 sm:w-5 text-brand shrink-0" />
+            <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider sm:tracking-widest text-stone-700">
               Guaranteed Best Rates Direct
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="h-5 w-5 text-brand" />
-            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-stone-700">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <CheckCircle2 className="h-4 sm:h-5 w-4 sm:w-5 text-brand shrink-0" />
+            <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider sm:tracking-widest text-stone-700">
               24/7 Dedicated Concierge
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <BedDouble className="h-5 w-5 text-brand" />
-            <span className="text-xs sm:text-sm font-semibold uppercase tracking-widest text-stone-700">
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            <BedDouble className="h-4 sm:h-5 w-4 sm:w-5 text-brand shrink-0" />
+            <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider sm:tracking-widest text-stone-700">
               Flexible Cancellation
             </span>
           </div>
