@@ -13,7 +13,7 @@ export interface TableQrCardProps {
 }
 
 export function TableQrCard({
-  initialUrl = "https://gujrahotel.com",
+  initialUrl = "https://gurjahotel.com",
   hotelName = "Gurja Hotel",
   city = "Shire, Tigray",
 }: TableQrCardProps) {
@@ -29,18 +29,27 @@ export function TableQrCard({
 
   const cardRef = useRef<HTMLDivElement>(null);
 
+  // Auto-detect current host if needed
+  const [currentOrigin, setCurrentOrigin] = useState<string>("");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setCurrentOrigin(window.location.origin);
+    }
+  }, []);
+
   // Generate QR code when url changes
   useEffect(() => {
     async function generateQr() {
       try {
-        const dataUrl = await QRCode.toDataURL(url, {
+        const cleanTarget = url.trim() || "https://gurjahotel.com";
+        const dataUrl = await QRCode.toDataURL(cleanTarget, {
           width: 600,
-          margin: 1.5,
+          margin: 2,
           color: {
             dark: "#1c1917", // deep charcoal
             light: "#ffffff",
           },
-          errorCorrectionLevel: "H",
+          errorCorrectionLevel: "H", // Maximum error correction (up to 30% redundancy) for 100% camera scanning accuracy
         });
         setQrDataUrl(dataUrl);
       } catch (err) {
@@ -127,15 +136,42 @@ export function TableQrCard({
           {/* Target Website */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-stone-700">
-              Website URL
+              Target Destination URL
             </label>
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="mt-1.5 w-full rounded-md border border-stone-300 px-3 py-2 text-sm text-stone-900 shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-              placeholder="https://gujrahotel.com"
+              placeholder="https://gurjahotel.com"
             />
+            {/* Quick URL Presets */}
+            <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
+              <button
+                type="button"
+                onClick={() => setUrl("https://gurjahotel.com")}
+                className="rounded bg-stone-100 px-2 py-0.5 text-stone-700 hover:bg-stone-200"
+              >
+                gurjahotel.com
+              </button>
+              <button
+                type="button"
+                onClick={() => setUrl("https://www.gurjahotel.com")}
+                className="rounded bg-stone-100 px-2 py-0.5 text-stone-700 hover:bg-stone-200"
+              >
+                www.gurjahotel.com
+              </button>
+              {currentOrigin && (
+                <button
+                  type="button"
+                  onClick={() => setUrl(currentOrigin)}
+                  className="rounded bg-amber-100 px-2 py-0.5 text-amber-800 hover:bg-amber-200 font-medium"
+                  title="Use current website address for live phone testing"
+                >
+                  Current Host ({currentOrigin.replace(/https?:\/\//, "")})
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Template Style */}
