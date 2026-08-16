@@ -18,6 +18,7 @@ export function ImageUpload({
   onChange: (url: string) => void;
 }) {
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const { startUpload, routeConfig } = useUploadThing("menuImage", {
     onClientUploadComplete: (res) => {
@@ -25,10 +26,12 @@ export function ImageUpload({
         onChange(res[0].url);
       }
       setIsUploading(false);
+      setUploadError(null);
     },
     onUploadError: (error) => {
       console.error("Upload error:", error);
       setIsUploading(false);
+      setUploadError(error.message || "Failed to upload image. Check permissions and upload settings.");
     },
   });
 
@@ -36,6 +39,7 @@ export function ImageUpload({
     async (acceptedFiles: File[]) => {
       if (acceptedFiles.length === 0) return;
       setIsUploading(true);
+      setUploadError(null);
       await startUpload(acceptedFiles);
     },
     [startUpload],
@@ -96,6 +100,11 @@ export function ImageUpload({
         </p>
         <p className="text-[10px] text-stone-400">PNG, JPG up to 4MB</p>
       </div>
+      {uploadError ? (
+        <p role="alert" className="mt-1.5 text-xs text-red-600">
+          {uploadError}
+        </p>
+      ) : null}
     </div>
   );
 }

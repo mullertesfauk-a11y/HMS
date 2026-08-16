@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 /*
- * Grand Meridian design tokens — calm, premium, refined.
- * stone: warm grays · brand: deep forest green with brass undertone ·
+ * Grand Meridian design tokens — vibrant, modern delivery & hotel experience.
+ * stone: warm grays · brand: vibrant delivery orange ·
  * surface: pure/warm white
  */
 :root {
   --background: #fafaf9; /* stone-50 */
   --foreground: #1c1917; /* stone-900 */
-  --brand: #2f6b4f; /* Deep evergreen */
-  --brand-dark: #1e4835; /* Darker forest */
-  --brand-light: #e7efe9; /* Soft sage tint */
-  --brand-brass: #b08d57; /* Polished brass accent */
+  --brand: #ff5400; /* Vibrant delivery app orange */
+  --brand-dark: #d94300; /* Darker vibrant orange for hover */
+  --brand-light: #fff2eb; /* Soft orange tint */
+  --brand-brass: #ea580c; /* Warm orange-amber accent */
   --surface: #ffffff;
   --surface-hover: #f5f5f4; /* stone-100 */
 }

@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { createUploadthing, UploadThingError } from "uploadthing/server";
 import type { FileRouter } from "uploadthing/server";
 
@@ -23,7 +24,21 @@ export const uploadRouter = {
     },
   })
     .middleware(async ({ req }) => {
-      const session = await auth.api.getSession({ headers: req.headers });
+      let requestHeaders: Headers;
+      try {
+        requestHeaders = await headers();
+      } catch {
+        requestHeaders = req.headers;
+      }
+
+      // Ensure cookie header from req is present if not in next/headers
+      if (!requestHeaders.get("cookie") && req.headers.get("cookie")) {
+        const merged = new Headers(requestHeaders);
+        merged.set("cookie", req.headers.get("cookie")!);
+        requestHeaders = merged;
+      }
+
+      const session = await auth.api.getSession({ headers: requestHeaders });
 
       if (!session?.user) {
         throw new UploadThingError("Unauthorized — no valid session");
