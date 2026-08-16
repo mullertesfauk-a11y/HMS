@@ -82,22 +82,12 @@ function getRating(slug: string): { score: string; count: number } {
   return { score: "4.0", count: 2 };
 }
 
-function getTimeGreeting(): string {
-  if (typeof window === "undefined") return "GOOD EVENING";
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return "GOOD MORNING";
-  if (hour >= 12 && hour < 17) return "GOOD AFTERNOON";
-  return "GOOD EVENING";
-}
-
 export interface LandingFeedProps {
   hotel: PublicHotel;
   roomTypes: PublicRoomType[];
   categories: MenuCategory[];
   items: MenuItem[];
 }
-
-const emptySubscribe = () => () => {};
 
 export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeedProps) {
   const [activeCategory, setActiveCategory] = React.useState<string>("all");
@@ -109,12 +99,6 @@ export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeed
   const [cartOpen, setCartOpen] = React.useState(false);
   const [bellOpen, setBellOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
-
-  const greeting = React.useSyncExternalStore(
-    emptySubscribe,
-    getTimeGreeting,
-    () => "GOOD EVENING",
-  );
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -232,112 +216,45 @@ export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeed
 
   return (
     <div className="min-h-screen bg-stone-50/60 pb-24 md:pb-16 text-stone-900 selection:bg-brand-light selection:text-brand">
-      {/* ── Top Header & Greeting Bar ────────────────────────────────────────── */}
-      <header className="sticky top-0 z-30 border-b border-stone-200/60 bg-white/95 px-4 pt-4 pb-3 backdrop-blur-md transition-all sm:px-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div>
-            <p className="text-[11px] sm:text-xs font-bold tracking-[0.2em] text-brand-brass uppercase">
-              {greeting}
-            </p>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-stone-900">
-              Guest
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-2.5 sm:gap-3">
-            {/* Wallet / Booking Lookup Button */}
-            <Link
-              href="/reservation/lookup"
-              aria-label="Room Folio and Booking Lookup"
-              className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-100/90 text-stone-700 shadow-xs transition-all hover:bg-stone-200 hover:text-stone-900 active:scale-95"
-            >
-              <Wallet className="h-5 w-5" />
-            </Link>
-
-            {/* Shopping Cart Button */}
-            <button
-              type="button"
-              onClick={() => setCartOpen(true)}
-              aria-label="Open Shopping Cart"
-              className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-100/90 text-stone-700 shadow-xs transition-all hover:bg-stone-200 hover:text-stone-900 active:scale-95"
-            >
-              <ShoppingBag className="h-5 w-5" />
-              {totalCartCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-brass px-1 text-[10px] font-bold text-white shadow-xs ring-2 ring-white animate-pulse">
-                  {totalCartCount}
-                </span>
-              )}
-            </button>
-
-            {/* Notification Bell */}
-            <button
-              type="button"
-              onClick={() => setBellOpen(!bellOpen)}
-              aria-label="Notifications"
-              className="relative flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-100/90 text-stone-700 shadow-xs transition-all hover:bg-stone-200 hover:text-stone-900 active:scale-95"
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2.5 h-2 w-2 rounded-full bg-brand ring-2 ring-white" />
-            </button>
-          </div>
-        </div>
-
-        {/* Bell Notification Dropdown */}
-        {bellOpen && (
-          <div className="mx-auto mt-3 max-w-7xl rounded-2xl border border-stone-200/80 bg-white p-4 shadow-xl">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-light text-brand">
-                  <Sparkles className="h-4 w-4" />
-                </span>
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-stone-900">
-                    Welcome to {hotel.name || "Gurja Hotel"}
-                  </h4>
-                  <p className="mt-0.5 text-xs text-stone-600">
-                    In-room dining and luxury suite concierge are active 24/7. Order your favorite dishes or explore suites below.
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setBellOpen(false)}
-                className="text-xs font-semibold text-stone-400 hover:text-stone-700"
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        )}
-      </header>
-
       {/* ── Main Feed Body ─────────────────────────────────────────────────── */}
       <main className="mx-auto max-w-7xl px-4 pt-5 sm:px-8">
-        {/* Desktop / Tablet Search Bar & Welcome strip */}
-        <div className="mb-6 hidden md:flex items-center justify-between gap-4 rounded-2xl border border-stone-200/70 bg-white p-4 shadow-xs">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-light text-brand">
-              <Sparkles className="h-5 w-5" />
-            </div>
+        {/* Top Search & Welcome Banner */}
+        <div className="mb-6 rounded-3xl border border-stone-200/80 bg-white p-4 sm:p-6 shadow-xs">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="font-luxury text-base font-semibold text-stone-900">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-stone-900">
                 Artisanal Dining &amp; Bespoke Suites
-              </p>
-              <p className="text-xs text-stone-500">
-                Experience authentic Tigrayan warmth, organic farm-to-table cuisine, and luxury accommodations.
+              </h1>
+              <p className="mt-1 text-xs sm:text-sm text-stone-500 max-w-xl">
+                Experience authentic Ethiopian warmth, organic farm-to-table cuisine, and luxury accommodations at {hotel.name || "Gurja Hotel"}.
               </p>
             </div>
-          </div>
 
-          <div className="relative w-72">
-            <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-            <input
-              type="text"
-              placeholder="Search dishes or suites…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-stone-200 bg-stone-50/60 py-2 pl-9 pr-4 text-xs font-medium focus:border-brand focus:bg-white focus:outline-none"
-            />
+            {/* Integrated Search Bar & Action Buttons */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <div className="relative w-full sm:w-72">
+                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+                <input
+                  type="text"
+                  placeholder="Search dishes or suites…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full rounded-2xl border border-stone-200 bg-stone-50/70 py-2.5 pl-9 pr-4 text-xs font-medium focus:border-brand focus:bg-white focus:outline-none transition-colors"
+                />
+              </div>
+
+              {totalCartCount > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setCartOpen(true)}
+                  aria-label="Open Shopping Cart"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-brand/20 transition-all hover:bg-brand-dark active:scale-95"
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  <span>Cart ({totalCartCount})</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

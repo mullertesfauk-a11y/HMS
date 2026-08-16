@@ -15,16 +15,8 @@ import { cn } from "@/lib/utils/cn";
  * app-style header takes center stage.
  */
 export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
-  const pathname = usePathname();
-  const isHome = pathname === "/";
-
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 backdrop-blur-md transition-all duration-300",
-        isHome && "hidden md:block",
-      )}
-    >
+    <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 backdrop-blur-md transition-all duration-300">
       <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-8">
         <HotelLogo
           name={hotel.name || "GURJA"}
@@ -37,7 +29,7 @@ export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
 
         <SiteNav className="hidden items-center gap-6 md:flex" />
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <Link
             href="/admin/login"
             className="hidden text-xs font-medium uppercase tracking-widest text-stone-400 transition-colors hover:text-foreground lg:block"
@@ -46,7 +38,7 @@ export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
           </Link>
           <Link
             href="/rooms"
-            className="inline-flex h-11 items-center justify-center gap-2 whitespace-nowrap rounded-sm bg-brand px-6 text-xs font-medium uppercase tracking-widest text-white shadow-sm transition-all duration-300 hover:bg-brand-dark hover:shadow-md"
+            className="inline-flex h-10 sm:h-11 items-center justify-center gap-2 whitespace-nowrap rounded-full md:rounded-sm bg-brand px-4 sm:px-6 text-xs font-medium uppercase tracking-widest text-white shadow-sm transition-all duration-300 hover:bg-brand-dark hover:shadow-md"
           >
             <Search className="h-4 w-4" />
             <span className="hidden sm:inline">Find a Room</span>
@@ -54,12 +46,10 @@ export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
         </div>
       </div>
 
-      {/* Mobile nav for sub-pages */}
-      {!isHome && (
-        <nav aria-label="Main navigation (mobile)" className="border-t border-stone-100 bg-white md:hidden">
-          <SiteNav className="mx-auto flex w-full items-center justify-center gap-4 px-4 py-3" />
-        </nav>
-      )}
+      {/* Mobile main navigation bar */}
+      <nav aria-label="Main navigation (mobile)" className="border-t border-stone-100 bg-white md:hidden">
+        <SiteNav className="mx-auto flex w-full items-center justify-center gap-4 px-4 py-2.5" />
+      </nav>
     </header>
   );
 }
