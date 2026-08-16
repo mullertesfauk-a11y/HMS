@@ -32,7 +32,7 @@ export function MenuCategoryNav({
             onClick={() => onSelect(cat.id)}
             aria-pressed={active === cat.id}
             className={cn(
-              "shrink-0 rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-widest transition-all duration-200 sm:px-5 sm:py-2",
+              "shrink-0 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-widest transition-all duration-200 sm:px-5 sm:py-2.5",
               active === cat.id
                 ? "bg-stone-900 text-white shadow-md"
                 : "border border-stone-200 bg-white text-stone-600 hover:border-stone-400 hover:text-stone-900",

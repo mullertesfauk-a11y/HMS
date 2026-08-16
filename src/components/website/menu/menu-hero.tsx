@@ -2,7 +2,7 @@ import type { PublicHotel } from "@/server/services/hotel.service";
 
 export function MenuHero({ hotel }: { hotel: PublicHotel }) {
   return (
-    <section className="relative overflow-hidden bg-stone-950 py-16 sm:py-24 lg:py-28">
+    <section className="relative overflow-hidden bg-stone-950 py-14 sm:py-24 lg:py-28">
       <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1600&auto=format&fit=crop"

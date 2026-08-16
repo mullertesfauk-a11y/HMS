@@ -112,14 +112,14 @@ export function MenuBrowser({
 
   return (
     <>
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-3 sm:px-6 lg:px-8">
         {/* Search */}
-        <div className="flex justify-center pt-4 pb-4 sm:py-6">
+        <div className="flex justify-center pt-2 pb-3 sm:py-6">
           <MenuSearch query={query} onQueryChange={setQuery} />
         </div>
 
         {/* Category nav */}
-        <div className="flex justify-center py-2">
+        <div className="flex justify-center py-1.5 sm:py-2">
           <MenuCategoryNav
             categories={categories}
             active={activeCategory}

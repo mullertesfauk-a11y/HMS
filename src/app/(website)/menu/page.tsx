@@ -23,7 +23,7 @@ export default async function MenuPage() {
       <MenuHero hotel={hotel} />
 
       {/* Spacer to pull content up slightly for visual overlap with hero, like the rooms page */}
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8 lg:py-12">
+      <div className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-8 sm:py-8 lg:py-12">
         <MenuBrowser
           categories={menu.categories}
           items={menu.items}

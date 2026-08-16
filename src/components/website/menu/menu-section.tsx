@@ -19,9 +19,9 @@ export function MenuSection({
   if (items.length === 0) return null;
 
   return (
-    <section className="py-8 sm:py-12 md:py-14">
-      <div className="flex items-baseline gap-3 border-b border-stone-200 pb-4">
-        <h2 className="font-luxury text-lg font-semibold uppercase tracking-wider text-stone-900 sm:text-xl md:text-2xl">
+    <section className="py-6 sm:py-12 md:py-14">
+      <div className="flex items-baseline gap-3 border-b border-stone-200 pb-3 sm:pb-4">
+        <h2 className="font-luxury text-base font-semibold uppercase tracking-wider text-stone-900 sm:text-xl md:text-2xl">
           {name}
         </h2>
         <span lang="am" className="text-xs text-stone-400">
@@ -29,7 +29,7 @@ export function MenuSection({
         </span>
         <span className="h-[1px] flex-1 bg-stone-200" />
       </div>
-      <div className="mt-6 gap-x-8 gap-y-8 sm:mt-8 sm:gap-x-10 sm:gap-y-10 md:grid-cols-2">
+      <div className="mt-5 gap-x-8 gap-y-6 sm:mt-8 sm:gap-x-10 sm:gap-y-10 md:grid-cols-2">
         {items.map((item) => (
           <MenuItemCard
             key={item.id}
