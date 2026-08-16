@@ -25,9 +25,9 @@ const envSchema = z
     BETTER_AUTH_URL: z.string().url().optional(),
     NEXT_PUBLIC_APP_URL: z.string().url().optional(),
 
-    // Uploadthing (image uploads)
-    UPLOADTHING_TOKEN: z.string().min(1, "UPLOADTHING_TOKEN is required"),
-    UPLOADTHING_APP_ID: z.string().min(1, "UPLOADTHING_APP_ID is required"),
+    // Uploadthing (image uploads — optional in dev, required at runtime for uploads)
+    UPLOADTHING_TOKEN: z.string().optional(),
+    UPLOADTHING_APP_ID: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     // Production safety: the app URL must be known and served over HTTPS so

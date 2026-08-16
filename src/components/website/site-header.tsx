@@ -1,17 +1,30 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
 
 import type { PublicHotel } from "@/server/services/hotel.service";
 import { HotelLogo } from "@/components/ui/hotel-logo";
 import { SiteNav } from "@/components/website/site-nav";
+import { cn } from "@/lib/utils/cn";
 
 /**
  * Public website header: brand mark, primary navigation, and a discreet link
- * to the staff portal.
+ * to the staff portal. On mobile for the landing page (/), it hides so the
+ * app-style header takes center stage.
  */
 export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 backdrop-blur-md transition-all duration-300">
+    <header
+      className={cn(
+        "sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 backdrop-blur-md transition-all duration-300",
+        isHome && "hidden md:block",
+      )}
+    >
       <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-8">
         <HotelLogo
           name={hotel.name || "GURJA"}
@@ -41,10 +54,12 @@ export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
         </div>
       </div>
 
-      {/* Mobile nav */}
-      <nav aria-label="Main navigation (mobile)" className="border-t border-stone-100 bg-white md:hidden">
-        <SiteNav className="mx-auto flex w-full items-center justify-center gap-4 px-4 py-3" />
-      </nav>
+      {/* Mobile nav for sub-pages */}
+      {!isHome && (
+        <nav aria-label="Main navigation (mobile)" className="border-t border-stone-100 bg-white md:hidden">
+          <SiteNav className="mx-auto flex w-full items-center justify-center gap-4 px-4 py-3" />
+        </nav>
+      )}
     </header>
   );
 }

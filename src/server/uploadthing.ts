@@ -1,15 +1,19 @@
 import { createUploadthing, UploadThingError } from "uploadthing/server";
 import type { FileRouter } from "uploadthing/server";
 
-import { prisma } from "@/lib/db/prisma";
+import { auth } from "@/lib/auth";
+import type { Role } from "@/lib/permissions";
 
 const f = createUploadthing();
 
 /**
  * Uploadthing file router.
  *
- * Auth middleware verifies the Better Auth session from cookies on the
- * incoming Request — only authenticated admin/staff may upload.
+ * Auth middleware verifies the Better Auth session from the incoming Request
+ * — only authenticated admin/staff may upload. Session resolution goes through
+ * `auth.api.getSession` (same path as the rest of the app) because the browser
+ * cookie holds the *signed* session token while the DB stores the raw token;
+ * a manual `prisma.session.findUnique` on the cookie value can never match.
  */
 export const uploadRouter = {
   menuImage: f({
@@ -19,32 +23,19 @@ export const uploadRouter = {
     },
   })
     .middleware(async ({ req }) => {
-      // Verify Better Auth session from cookies
-      const cookieHeader = req.headers.get("cookie") ?? "";
-      const sessionToken = cookieHeader
-        .split(";")
-        .map((c) => c.trim())
-        .find((c) => c.startsWith("hms.session="))
-        ?.split("=")[1];
+      const session = await auth.api.getSession({ headers: req.headers });
 
-      if (!sessionToken) {
-        throw new UploadThingError("Unauthorized — no session");
+      if (!session?.user) {
+        throw new UploadThingError("Unauthorized — no valid session");
       }
 
-      const session = await prisma.session.findUnique({
-        where: { token: sessionToken },
-        include: { user: true },
-      });
+      const user = session.user as unknown as { id: string; role: Role; status: string };
 
-      if (!session || session.expiresAt < new Date()) {
-        throw new UploadThingError("Unauthorized — session expired");
-      }
-
-      if (session.user.status !== "ACTIVE") {
+      if (user.status !== "ACTIVE") {
         throw new UploadThingError("Forbidden — account disabled");
       }
 
-      return { userId: session.user.id, role: session.user.role };
+      return { userId: user.id, role: user.role };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       console.log(

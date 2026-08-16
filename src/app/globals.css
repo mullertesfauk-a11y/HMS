@@ -44,3 +44,12 @@ body {
   outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* Hide scrollbar for smooth carousel containers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

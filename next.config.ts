@@ -48,9 +48,14 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
-        port: "",
         pathname: "/**",
-        search: "",
+      },
+      // UploadThing-hosted images (menu item photos). `utfs.io` is already
+      // allowed by the CSP img-src above.
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        pathname: "/**",
       },
     ],
   },
