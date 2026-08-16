@@ -13,7 +13,7 @@ export interface TableQrCardProps {
 }
 
 export function TableQrCard({
-  initialUrl = "https://gurjahotel.com",
+  initialUrl = "https://gurjahotel.com/menu",
   hotelName = "Gurja Hotel",
   city = "Shire, Tigray",
 }: TableQrCardProps) {
@@ -41,7 +41,7 @@ export function TableQrCard({
   useEffect(() => {
     async function generateQr() {
       try {
-        const cleanTarget = url.trim() || "https://gurjahotel.com";
+        const cleanTarget = url.trim() || "https://gurjahotel.com/menu";
         const dataUrl = await QRCode.toDataURL(cleanTarget, {
           width: 600,
           margin: 2,
@@ -143,23 +143,23 @@ export function TableQrCard({
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="mt-1.5 w-full rounded-md border border-stone-300 px-3 py-2 text-sm text-stone-900 shadow-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-              placeholder="https://gurjahotel.com"
+              placeholder="https://gurjahotel.com/menu"
             />
             {/* Quick URL Presets */}
             <div className="mt-2 flex flex-wrap gap-1.5 text-[11px]">
               <button
                 type="button"
-                onClick={() => setUrl("https://gurjahotel.com")}
+                onClick={() => setUrl("https://gurjahotel.com/menu")}
                 className="rounded bg-stone-100 px-2 py-0.5 text-stone-700 hover:bg-stone-200"
               >
-                gurjahotel.com
+                gurjahotel.com/menu
               </button>
               <button
                 type="button"
-                onClick={() => setUrl("https://www.gurjahotel.com")}
+                onClick={() => setUrl("https://www.gurjahotel.com/menu")}
                 className="rounded bg-stone-100 px-2 py-0.5 text-stone-700 hover:bg-stone-200"
               >
-                www.gurjahotel.com
+                www.gurjahotel.com/menu
               </button>
               {currentOrigin && (
                 <button

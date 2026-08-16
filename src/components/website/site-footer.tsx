@@ -30,6 +30,7 @@ export function SiteFooter({ hotel }: { hotel: PublicHotel }) {
           <p className="text-xs font-semibold uppercase tracking-widest text-white">Hotel</p>
           <ul className="mt-6 space-y-3 text-sm">
             <li><Link href="/rooms" className="transition-colors hover:text-brand-light">Rooms &amp; Suites</Link></li>
+            <li><Link href="/menu" className="transition-colors hover:text-brand-light">Dining Menu</Link></li>
             <li><Link href="/reservation/lookup" className="transition-colors hover:text-brand-light">Find My Booking</Link></li>
             <li><Link href="/table-qr" className="transition-colors hover:text-brand-light">Table QR Stand</Link></li>
           </ul>

@@ -13,7 +13,7 @@ export default async function TableQrPage() {
   return (
     <div className="min-h-screen bg-stone-100/60 pb-20 pt-8 print:bg-white print:p-0">
       <TableQrCard
-        initialUrl="https://gurjahotel.com"
+        initialUrl="https://gurjahotel.com/menu"
         hotelName={hotel.name || "Gurja Hotel"}
         city={hotel.city || "Shire, Tigray"}
       />

@@ -43,6 +43,17 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   // Don't advertise the framework (X-Powered-By: Next.js).
   poweredByHeader: false,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+        pathname: "/**",
+        search: "",
+      },
+    ],
+  },
   async headers() {
     return [
       {
