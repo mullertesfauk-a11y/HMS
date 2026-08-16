@@ -11,8 +11,11 @@ import {
   type CreateReservationInput,
 } from "@/lib/validation/reservation";
 import { reservationService } from "@/server/services/reservation.service";
+import { orderService } from "@/server/services/order.service";
 import { hotelService } from "@/server/services/hotel.service";
 import { toPublicReservationView, type PublicReservationView } from "@/server/services/reservation.view";
+import { toPublicOrderView, type PublicOrderView } from "@/server/services/order.view";
+import { createOrderSchema, orderLookupSchema, type CreateOrderInput } from "@/lib/validation/order";
 import { z } from "zod";
 
 /**
@@ -116,6 +119,60 @@ export async function cancelReservation(input: {
 
     const reservation = await reservationService.cancelPublic(parsed.data, { ipAddress: ip });
     return { ok: true, reservation: toPublicReservationView(reservation) };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : "Something went wrong" };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Food ordering
+// ---------------------------------------------------------------------------
+
+export type OrderResult =
+  | { ok: true; order: PublicOrderView }
+  | { ok: false; error: string };
+
+/** Place a food order from the public website (rate limited). */
+export async function placeOrder(input: CreateOrderInput): Promise<OrderResult> {
+  try {
+    const ip = await getClientIp();
+    await enforceRateLimit(`website:order:${ip}`, { limit: 10, windowMs: 60_000 });
+
+    const parsed = createOrderSchema.safeParse(input);
+    if (!parsed.success) return { ok: false, error: validationMessage(parsed.error) };
+
+    const hotel = await hotelService.getDefaultHotel();
+    const order = await orderService.createOrder(parsed.data, {
+      hotelId: hotel.id,
+      currency: hotel.currency,
+      taxRate: hotel.taxRate.toNumber(),
+      ipAddress: ip,
+    });
+
+    return { ok: true, order: toPublicOrderView(order) };
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : "Something went wrong" };
+  }
+}
+
+export type OrderLookupResult =
+  | { ok: true; order: PublicOrderView }
+  | { ok: false; error: string };
+
+/** Public order lookup by order number + phone (rate limited). */
+export async function lookupOrder(input: {
+  orderNumber: string;
+  guestPhone: string;
+}): Promise<OrderLookupResult> {
+  try {
+    const ip = await getClientIp();
+    await enforceRateLimit(`website:order-lookup:${ip}`, { limit: 20, windowMs: 60_000 });
+
+    const parsed = orderLookupSchema.safeParse(input);
+    if (!parsed.success) return { ok: false, error: validationMessage(parsed.error) };
+
+    const order = await orderService.lookup(parsed.data);
+    return { ok: true, order: toPublicOrderView(order) };
   } catch (error) {
     return { ok: false, error: error instanceof Error ? error.message : "Something went wrong" };
   }

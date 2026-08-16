@@ -6,6 +6,7 @@ import { useState } from "react";
 import {
   BedDouble,
   CalendarDays,
+  ClipboardList,
   ConciergeBell,
   DoorOpen,
   LayoutDashboard,
@@ -13,6 +14,7 @@ import {
   QrCode,
   Settings,
   Users,
+  UtensilsCrossed,
   type LucideIcon,
 } from "lucide-react";
 
@@ -32,6 +34,8 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/reservations", label: "Reservations", icon: CalendarDays },
+  { href: "/admin/orders", label: "Orders", icon: ClipboardList },
+  { href: "/admin/menu", label: "Menu", icon: UtensilsCrossed },
   { href: "/admin/rooms", label: "Rooms", icon: DoorOpen },
   { href: "/admin/room-types", label: "Room types", icon: BedDouble },
   { href: "/admin/guests", label: "Guests", icon: Users },

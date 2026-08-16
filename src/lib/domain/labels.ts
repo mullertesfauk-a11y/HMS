@@ -51,6 +51,10 @@ const LABELS: Record<string, { label: string; variant: BadgeVariant }> = {
   ADMIN: { label: "Admin", variant: "brand" },
   STAFF: { label: "Staff", variant: "neutral" },
   DISABLED: { label: "Disabled", variant: "red" },
+
+  // Order statuses
+  PLACED: { label: "Placed", variant: "blue" },
+  COMPLETED: { label: "Completed", variant: "green" },
 };
 
 /** Label + badge variant for any known enum value; safe fallback. */

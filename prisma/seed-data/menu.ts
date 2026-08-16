@@ -1,6 +1,35 @@
-import type { MenuCategory, MenuItem } from "./menu-types";
+import type { DietaryTag, MenuItemBadge } from "../../src/lib/menu/menu-types";
 
-export const MENU_CATEGORIES: MenuCategory[] = [
+/**
+ * Reference menu data for the seed (single source of truth for what a fresh
+ * database contains). Slugs are derived at seed time — categories use their
+ * `id`, items use a slugified `name`.
+ */
+
+export interface SeedMenuCategory {
+  id: string;
+  name: string;
+  nameAm: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+export interface SeedMenuItem {
+  id: string;
+  categoryId: string;
+  name: string;
+  nameAm: string;
+  description: string;
+  price: number;
+  image?: string;
+  isAvailable: boolean;
+  isFeatured: boolean;
+  dietaryTags: DietaryTag[];
+  badges: MenuItemBadge[];
+  sortOrder: number;
+}
+
+export const MENU_CATEGORIES: SeedMenuCategory[] = [
   { id: "breakfast", name: "Breakfast", nameAm: "እራት ማግስት", sortOrder: 1, isActive: true },
   { id: "starters", name: "Starters", nameAm: "መክሰስ", sortOrder: 2, isActive: true },
   { id: "ethiopian", name: "Ethiopian Favorites", nameAm: "ባህላዊ ምግቦች", sortOrder: 3, isActive: true },
@@ -12,7 +41,7 @@ export const MENU_CATEGORIES: MenuCategory[] = [
   { id: "drinks", name: "Drinks", nameAm: "መጠጥ", sortOrder: 9, isActive: true },
 ];
 
-export const MENU_ITEMS: MenuItem[] = [
+export const MENU_ITEMS: SeedMenuItem[] = [
   // ── Breakfast ──────────────────────────────────────────────
   {
     id: "breakfast-1",

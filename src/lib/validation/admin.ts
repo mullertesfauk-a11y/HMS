@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import {
+  OrderStatus,
   PaymentStatus,
   ReservationStatus,
   RoomStatus,
@@ -46,6 +47,26 @@ export const adminRoomTypeListSchema = z.object({
 
 export const adminGuestListSchema = z.object({
   search: z.string().trim().max(100).optional(),
+  ...paginationShape,
+});
+
+export const adminOrderListSchema = z.object({
+  search: z.string().trim().max(100).optional(),
+  status: z.enum(enumValues(OrderStatus)).optional(),
+  /** Inclusive day filters on the order creation timestamp. */
+  dateFrom: hotelDateSchema.optional(),
+  dateTo: hotelDateSchema.optional(),
+  ...paginationShape,
+});
+
+export const adminMenuCategoryListSchema = z.object({
+  ...paginationShape,
+});
+
+export const adminMenuItemListSchema = z.object({
+  search: z.string().trim().max(100).optional(),
+  categoryId: z.string().cuid().optional(),
+  isAvailable: z.enum(["true", "false"]).transform((v) => v === "true").optional(),
   ...paginationShape,
 });
 

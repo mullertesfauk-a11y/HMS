@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { PrismaNeon } from "@prisma/adapter-neon";
 import { hashPassword } from "better-auth/crypto";
 import { PrismaClient } from "../src/generated/prisma/client";
+import { MENU_CATEGORIES, MENU_ITEMS } from "./seed-data/menu";
 
 /**
  * Development seed data.
@@ -106,6 +107,14 @@ const ROOM_TYPES = [
   },
 ] as const;
 
+/** Kebab-case slug used as the stable public reference for menu items. */
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 async function main() {
   console.log("🌱 Seeding database…");
 
@@ -183,6 +192,74 @@ async function main() {
     }
     console.log(`  • Room type: ${rt.name} (${rt.rooms.length} rooms)`);
   }
+
+  // Menu categories + items
+  //
+  // The public site serves the FIRST hotel (hotelService.getDefaultHotel), so
+  // the menu must live under that hotel — on a transitional dev DB (an older
+  // pre-rebrand hotel created first) this differs from the hotel upserted
+  // above. On a fresh DB they are the same hotel.
+  const menuHotel = (await prisma.hotel.findFirst({ orderBy: { createdAt: "asc" } })) ?? hotel;
+  const menuCategoryIds = new Map<string, string>();
+  for (const category of MENU_CATEGORIES) {
+    const record = await prisma.menuCategory.upsert({
+      where: { hotelId_slug: { hotelId: menuHotel.id, slug: category.id } },
+      update: {
+        name: category.name,
+        nameAm: category.nameAm,
+        sortOrder: category.sortOrder,
+        isActive: category.isActive,
+      },
+      create: {
+        hotelId: menuHotel.id,
+        slug: category.id,
+        name: category.name,
+        nameAm: category.nameAm,
+        sortOrder: category.sortOrder,
+        isActive: category.isActive,
+      },
+    });
+    menuCategoryIds.set(category.id, record.id);
+  }
+  console.log(`  • Menu categories: ${MENU_CATEGORIES.length}`);
+
+  for (const item of MENU_ITEMS) {
+    const categoryId = menuCategoryIds.get(item.categoryId);
+    if (!categoryId) continue;
+    const slug = slugify(item.name);
+    await prisma.menuItem.upsert({
+      where: { hotelId_slug: { hotelId: menuHotel.id, slug } },
+      update: {
+        categoryId,
+        name: item.name,
+        nameAm: item.nameAm,
+        description: item.description,
+        price: item.price,
+        image: item.image ?? null,
+        isAvailable: item.isAvailable,
+        isFeatured: item.isFeatured,
+        dietaryTags: item.dietaryTags,
+        badges: item.badges,
+        sortOrder: item.sortOrder,
+      },
+      create: {
+        hotelId: menuHotel.id,
+        categoryId,
+        slug,
+        name: item.name,
+        nameAm: item.nameAm,
+        description: item.description,
+        price: item.price,
+        image: item.image ?? null,
+        isAvailable: item.isAvailable,
+        isFeatured: item.isFeatured,
+        dietaryTags: item.dietaryTags,
+        badges: item.badges,
+        sortOrder: item.sortOrder,
+      },
+    });
+  }
+  console.log(`  • Menu items: ${MENU_ITEMS.length}`);
 
   // Staff users (Better Auth User + Account rows)
   const staff = [

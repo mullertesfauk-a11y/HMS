@@ -49,6 +49,12 @@ enum ReservationStatus {
   NO_SHOW
 }
 
+enum OrderStatus {
+  PLACED
+  COMPLETED
+  CANCELLED
+}
+
 enum PaymentMethod {
   CASH
   BANK_TRANSFER
@@ -92,6 +98,7 @@ model User {
   sessions             Session[]
   accounts             Account[]
   createdReservations  Reservation[] @relation("ReservationCreatedBy")
+  createdOrders        Order[]       @relation("OrderCreatedBy")
   auditLogs            AuditLog[]
 
   @@map("user")
@@ -165,9 +172,12 @@ model Hotel {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  roomTypes    RoomType[]
-  rooms        Room[]
-  reservations Reservation[]
+  roomTypes       RoomType[]
+  rooms           Room[]
+  reservations   Reservation[]
+  menuCategories MenuCategory[]
+  menuItems      MenuItem[]
+  orders         Order[]
 }
 
 model Amenity {
@@ -335,10 +345,112 @@ model Payment {
   @@index([status])
 }
 
+// ---------------------------------------------------------------------------
+// Restaurant / menu domain
+// ---------------------------------------------------------------------------
+
+// Menu category (e.g. "Ethiopian Favorites"). The public website renders only
+// ACTIVE categories; staff can hide a category without deleting its items.
+model MenuCategory {
+  id        String   @id @default(cuid())
+  hotelId   String
+  slug      String
+  name      String
+  nameAm    String
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  hotel Hotel      @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  items MenuItem[]
+
+  @@unique([hotelId, slug])
+  @@index([hotelId, isActive, sortOrder])
+}
+
+// A dish/drink. `dietaryTags` and `badges` are validated server-side against
+// the unions in src/lib/menu/menu-types.ts. Prices are Decimal — never sent
+// from the client; orders snapshot name + price at order time.
+model MenuItem {
+  id            String   @id @default(cuid())
+  hotelId       String
+  categoryId    String
+  slug          String
+  name          String
+  nameAm        String
+  description   String
+  descriptionAm String?
+  price         Decimal  @db.Decimal(12, 2)
+  image         String?
+  isAvailable   Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  dietaryTags   String[]
+  badges        String[]
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  hotel      Hotel        @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  category   MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems OrderItem[]
+
+  @@unique([hotelId, slug])
+  @@index([hotelId, categoryId, isAvailable])
+  @@index([categoryId])
+}
+
+// Food order placed from the public website (takeaway / delivery / counter).
+// Payment happens offline (pay on delivery / at the counter) — totals are
+// server-computed from the ordered items and snapshotted on OrderItem.
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique
+  hotelId       String
+  guestName     String
+  guestPhone    String
+  deliveryNotes String?
+  status        OrderStatus @default(PLACED)
+  subtotal      Decimal     @db.Decimal(12, 2)
+  tax           Decimal     @db.Decimal(12, 2)
+  total         Decimal     @db.Decimal(12, 2)
+  currency      String
+  createdById   String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  hotel     Hotel       @relation(fields: [hotelId], references: [id], onDelete: Restrict)
+  createdBy User?       @relation("OrderCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  items     OrderItem[]
+  auditLogs AuditLog[]
+
+  @@index([hotelId, status])
+  @@index([hotelId, createdAt])
+}
+
+// Line item on an order. `itemName` + `unitPrice` are snapshots so later menu
+// price changes never alter what a placed order charged.
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  menuItemId String
+  itemName   String
+  unitPrice  Decimal @db.Decimal(12, 2)
+  quantity   Int
+  subtotal   Decimal @db.Decimal(12, 2)
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItem MenuItem @relation(fields: [menuItemId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([menuItemId])
+}
+
 model AuditLog {
   id            String   @id @default(cuid())
   userId        String?
   reservationId String?
+  orderId       String?
   action        String
   entity        String
   entityId      String?
@@ -350,9 +462,11 @@ model AuditLog {
 
   user        User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
   reservation Reservation? @relation(fields: [reservationId], references: [id], onDelete: SetNull)
+  order       Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   @@index([entity, entityId])
   @@index([userId])
   @@index([reservationId])
+  @@index([orderId])
   @@index([createdAt])
 }

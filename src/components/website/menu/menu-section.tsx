@@ -7,19 +7,21 @@ export function MenuSection({
   items,
   currency,
   onSelectItem,
+  onAddToCart,
 }: {
   name: string;
   nameAm: string;
   items: MenuItemType[];
   currency: string;
   onSelectItem: (item: MenuItemType) => void;
+  onAddToCart: (item: MenuItemType) => void;
 }) {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-10 sm:py-14">
+    <section className="py-8 sm:py-12 md:py-14">
       <div className="flex items-baseline gap-3 border-b border-stone-200 pb-4">
-        <h2 className="font-luxury text-xl font-semibold uppercase tracking-wider text-stone-900 sm:text-2xl">
+        <h2 className="font-luxury text-lg font-semibold uppercase tracking-wider text-stone-900 sm:text-xl md:text-2xl">
           {name}
         </h2>
         <span lang="am" className="text-xs text-stone-400">
@@ -27,13 +29,14 @@ export function MenuSection({
         </span>
         <span className="h-[1px] flex-1 bg-stone-200" />
       </div>
-      <div className="mt-8 grid gap-x-10 gap-y-10 md:grid-cols-2">
+      <div className="mt-6 gap-x-8 gap-y-8 sm:mt-8 sm:gap-x-10 sm:gap-y-10 md:grid-cols-2">
         {items.map((item) => (
           <MenuItemCard
             key={item.id}
             item={item}
             currency={currency}
             onSelect={onSelectItem}
+            onAddToCart={onAddToCart}
           />
         ))}
       </div>

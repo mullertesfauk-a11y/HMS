@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { calculatePricing } from "@/lib/domain/pricing";
+import { calculateOrderPricing, calculatePricing } from "@/lib/domain/pricing";
 
 describe("calculatePricing", () => {
   it("single night, no tax or discount", () => {
@@ -40,5 +40,39 @@ describe("calculatePricing", () => {
     expect(pricing.subtotal).toBe(299.97);
     expect(pricing.tax).toBe(25.5); // 299.97 * 0.085 = 25.49745 → 25.5
     expect(pricing.total).toBeCloseTo(325.47, 2);
+  });
+});
+
+describe("calculateOrderPricing", () => {
+  it("sums unit price × quantity with no tax", () => {
+    const pricing = calculateOrderPricing([
+      { unitPrice: 780, quantity: 2 },
+      { unitPrice: 220, quantity: 1 },
+    ]);
+    expect(pricing.subtotal).toBe(1780);
+    expect(pricing.tax).toBe(0);
+    expect(pricing.discount).toBe(0);
+    expect(pricing.total).toBe(1780);
+  });
+
+  it("applies the tax rate to the subtotal", () => {
+    const pricing = calculateOrderPricing([{ unitPrice: 1000, quantity: 1 }], 15);
+    expect(pricing.subtotal).toBe(1000);
+    expect(pricing.tax).toBe(150);
+    expect(pricing.total).toBe(1150);
+  });
+
+  it("avoids floating-point drift on per-line subtotals", () => {
+    const pricing = calculateOrderPricing([{ unitPrice: 99.99, quantity: 3 }], 8.5);
+    expect(pricing.subtotal).toBe(299.97);
+    expect(pricing.tax).toBe(25.5);
+    expect(pricing.total).toBeCloseTo(325.47, 2);
+  });
+
+  it("returns zero for an empty basket", () => {
+    const pricing = calculateOrderPricing([], 15);
+    expect(pricing.subtotal).toBe(0);
+    expect(pricing.tax).toBe(0);
+    expect(pricing.total).toBe(0);
   });
 });

@@ -53,3 +53,31 @@ export function calculatePricing(input: PricingInput): PricingBreakdown {
     total: toMajorUnits(Math.max(totalMinor, 0)),
   };
 }
+
+export interface OrderLineInput {
+  unitPrice: number;
+  quantity: number;
+}
+
+/**
+ * Authoritative order pricing: subtotal = Σ (unitPrice × quantity), then tax.
+ * Used by `orderService.createOrder` — the browser never sends totals.
+ */
+export function calculateOrderPricing(
+  lines: OrderLineInput[],
+  taxRate = 0,
+): PricingBreakdown {
+  const subtotalMinor = lines.reduce(
+    (sum, line) => sum + toMinorUnits(line.unitPrice) * line.quantity,
+    0,
+  );
+  const taxMinor = Math.round(subtotalMinor * (taxRate / 100));
+  const totalMinor = subtotalMinor + taxMinor;
+
+  return {
+    subtotal: toMajorUnits(subtotalMinor),
+    tax: toMajorUnits(taxMinor),
+    discount: 0,
+    total: toMajorUnits(totalMinor),
+  };
+}

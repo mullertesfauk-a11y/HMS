@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import type { MenuItem } from "@/lib/menu/menu-types";
 import { formatMoney } from "@/lib/utils/display";
 import { DietaryBadge } from "@/components/website/menu/dietary-badge";
@@ -10,13 +10,16 @@ export function MenuItemDetails({
   item,
   currency,
   onClose,
+  onAddToCart,
 }: {
   item: MenuItem;
   currency: string;
   onClose: () => void;
+  onAddToCart: (item: MenuItem, quantity: number) => void;
 }) {
   const ref = React.useRef<HTMLDialogElement>(null);
   const [imgLoaded, setImgLoaded] = React.useState(false);
+  const [quantity, setQuantity] = React.useState(1);
 
   React.useEffect(() => {
     const dialog = ref.current;
@@ -43,9 +46,14 @@ export function MenuItemDetails({
       onClick={(e) => {
         if (e.target === ref.current) onClose();
       }}
-      className="m-0 mt-auto h-[92svh] w-full max-h-[92svh] overflow-y-auto rounded-t-3xl border border-stone-200 bg-white shadow-2xl backdrop:bg-black/40 sm:mt-auto sm:h-auto sm:max-h-[85vh] sm:w-full sm:max-w-lg sm:rounded-2xl sm:m-auto open:flex open:flex-col"
+      className="m-0 mt-auto h-[92svh] w-full max-h-[92svh] overflow-y-auto rounded-t-3xl border border-stone-200 bg-white shadow-2xl backdrop:bg-black/40 sm:mt-auto sm:h-auto sm:max-h-[85vh] sm:w-full sm:max-w-lg sm:rounded-2xl sm:m-auto open:flex open:flex-col pb-safe"
       aria-labelledby="menu-detail-title"
     >
+      {/* Mobile drag handle */}
+      <div className="flex justify-center pt-3 sm:hidden">
+        <span className="h-1 w-10 rounded-full bg-stone-300" />
+      </div>
+
       {/* Image */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-stone-100 sm:aspect-[3/2] sm:rounded-t-2xl">
         {item.image ? (
@@ -70,19 +78,19 @@ export function MenuItemDetails({
           </div>
         )}
 
-        {/* Close button — visible on top of image */}
+        {/* Close button — bigger on mobile for touch targets */}
         <button
           type="button"
           onClick={onClose}
           aria-label="Close details"
-          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-stone-700 shadow-md backdrop-blur-sm transition-colors hover:bg-white"
+          className="absolute right-3 top-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-stone-700 shadow-md backdrop-blur-sm transition-colors hover:bg-white sm:h-8 sm:w-8"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5 sm:h-4 sm:w-4" />
         </button>
       </div>
 
       {/* Content */}
-      <div className="flex flex-1 flex-col px-5 py-5 sm:px-6">
+      <div className="flex flex-1 flex-col px-4 pb-6 pt-4 sm:px-6 sm:py-5">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2
@@ -141,15 +149,44 @@ export function MenuItemDetails({
           </div>
         )}
 
-        {/* Future order slot — reserved for ordering CTA */}
+        {/* Order CTA */}
         <div className="mt-auto pt-6">
-          <div className="border-t border-stone-200 pt-4">
+          <div className="flex items-center gap-3 border-t border-stone-200 pt-4">
+            {item.isAvailable && (
+              <div className="flex shrink-0 items-center gap-1 rounded-full border border-stone-200 px-1 py-0.5">
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  aria-label="Decrease quantity"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-stone-500 transition-colors hover:bg-stone-100"
+                >
+                  <Minus className="h-3.5 w-3.5" />
+                </button>
+                <span className="w-7 text-center text-sm font-semibold text-stone-900">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity((q) => Math.min(20, q + 1))}
+                  aria-label="Increase quantity"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full text-stone-500 transition-colors hover:bg-stone-100"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
             <button
               type="button"
               disabled={!item.isAvailable}
-              className="inline-flex h-12 w-full items-center justify-center rounded-sm bg-stone-900 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-brand disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-stone-900"
+              onClick={() => {
+                onAddToCart(item, quantity);
+                onClose();
+              }}
+              className="inline-flex h-12 flex-1 items-center justify-center rounded-sm bg-stone-900 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-brand disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-stone-900"
             >
-              {item.isAvailable ? "View Details" : "Currently Unavailable"}
+              {item.isAvailable
+                ? `Add to Cart · ${formatMoney(item.price * quantity, currency)}`
+                : "Currently Unavailable"}
             </button>
           </div>
         </div>

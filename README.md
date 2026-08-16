@@ -4,14 +4,15 @@ A production-ready MVP hotel reservation platform: a public booking website for
 guests plus an internal, table-oriented admin system for hotel staff.
 
 Built with **Next.js (App Router) + TypeScript + Tailwind CSS + Prisma +
-PostgreSQL (Neon) + Better Auth**. Architecturally prepared for a future
-food-ordering / restaurant module without a rewrite.
+PostgreSQL (Neon) + Better Auth**.
 
-> **Status:** All phases complete (1–8). Foundation, availability engine,
+> **Status:** All phases complete (1–9). Foundation, availability engine,
 > reservation domain + public API, protected admin API, admin UI (core +
-> modules), the public booking website, and security hardening + docs are all
-> done. Remaining work is operational: production rate-limit storage,
-> monitoring, and ongoing maintenance.
+> modules), the public booking website, security hardening + docs, and the
+> restaurant ordering module (DB-backed menu, cart + checkout, orders API,
+> admin orders + menu management) are all done. Remaining work is
+> operational: production rate-limit storage, monitoring, and ongoing
+> maintenance.
 
 ---
 
@@ -90,7 +91,7 @@ npx prisma db seed
 ```
 
 Seed data includes one hotel, 6 amenities, 3 room types (8 physical rooms),
-and two staff accounts:
+9 menu categories with 41 restaurant items, and two staff accounts:
 
 ```
 admin@example.com / Admin123!   (ADMIN — full access)
@@ -152,9 +153,14 @@ Coverage:
 - **Dates** (`src/lib/dates.test.ts`) — timezone-safe parsing/formatting,
   nights, and the overlap rule.
 - **Pricing** (`src/lib/domain/pricing.test.ts`) — single/multi-night, tax,
-  discount, float safety.
+  discount, float safety; plus `calculateOrderPricing` (line-item × quantity).
 - **State machine** (`src/lib/domain/reservation-status.test.ts`) — valid and
-  invalid transitions, cancellable/active status sets.
+  invalid transitions, cancellable/active status sets; and
+  `order-status.test.ts` for the order state machine.
+- **Order service** (`src/server/services/order.service.integration.test.ts`)
+  — creation happy path (server pricing, item snapshots, order number,
+  audit), unavailable-item and unknown-slug rejection, inactive-category
+  rejection, status transitions, and privacy-gated lookup.
 
 Integration tests skip automatically when `DATABASE_URL` is not set.
 
@@ -215,6 +221,15 @@ Public API (versioned, live):
 | POST   | `/api/v1/reservations` | Create reservation (transactional) |
 | POST   | `/api/v1/reservations/lookup` | Lookup by number + last name |
 | POST   | `/api/v1/reservations/:reservationNumber/cancel` | Cancel (cancellable states only) |
+| POST   | `/api/v1/orders` | Place a food order (transactional, server pricing) |
+| POST   | `/api/v1/orders/lookup` | Lookup by order number + phone |
+
+Order creation (`POST /api/v1/orders`) is a single transaction: menu items
+re-read by slug, availability checks (item available, category active),
+server-side pricing, order number, snapshot line items, and an audit entry.
+Totals from clients are never trusted. Payment is settled offline (pay on
+delivery / at the counter), so orders carry no payment step. Rate limiting
+applies to both order endpoints.
 
 Reservation creation is a single transaction: availability re-check, guest
 find-or-create, server-side pricing, reservation number, room-type line,
@@ -236,6 +251,8 @@ management, settings, and destructive room/room-type operations (403).
 | Room types | `GET/POST /api/v1/admin/room-types`, `GET/PATCH/DELETE /api/v1/admin/room-types/:id` |
 | Guests | `GET /api/v1/admin/guests`, `GET/PATCH /api/v1/admin/guests/:id` (with reservation history) |
 | Staff | `GET/POST /api/v1/admin/staff`, `GET/PATCH /api/v1/admin/staff/:id`, `POST …/disable` (via Better Auth admin plugin) |
+| Orders | `GET /api/v1/admin/orders` (search/status/date filters), `GET …/orders/:id`, `POST …/orders/:id/status` |
+| Menu | `GET/POST /api/v1/admin/menu/categories`, `PATCH/DELETE …/categories/:id`, `GET/POST …/menu/items`, `PATCH/DELETE …/items/:id` |
 | Settings | `GET/PATCH /api/v1/admin/settings` (hotel info, times, tax rate) |
 
 Reservation edits (`PATCH`) re-check availability excluding the reservation
@@ -277,7 +294,7 @@ Hardening (Phase 8) covers the auth surface, transport, and headers:
   object-src, tight sources), `X-Content-Type-Options: nosniff`,
   `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, and
   `X-Powered-By` is disabled.
-- **Audit trail.** Every reservation and staff action is recorded in
+- **Audit trail.** Every reservation, order, and staff action is recorded in
   `audit_log` inside the same transaction.
 
 ### Rate limiting
@@ -337,3 +354,11 @@ limiter: on multi-instance deployments point it at a shared store.
   headers via `next.config.ts`, production env validation (https app URL),
   integration tests guarding the hardened invariants, and this security
   section in the README.
+- **Phase 9 ✅:** restaurant ordering — menu moved into the database
+  (`MenuCategory`/`MenuItem` with admin CRUD), public cart + checkout on
+  `/menu` (name/phone + notes, pay on delivery), transactional
+  `orderService.createOrder` (slug lookup, availability checks, server
+  pricing, snapshot line items, audit), `POST /api/v1/orders` +
+  lookup + admin orders/status + admin menu management, all
+  permission-gated (`orders.*`, `menu.*`) and covered by unit + DB
+  integration tests.

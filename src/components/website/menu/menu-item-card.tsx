@@ -18,10 +18,12 @@ export function MenuItemCard({
   item,
   currency,
   onSelect,
+  onAddToCart,
 }: {
   item: MenuItem;
   currency: string;
   onSelect: (item: MenuItem) => void;
+  onAddToCart: (item: MenuItem) => void;
 }) {
   const badgeLabels: Record<string, string> = {
     popular: "Popular",
@@ -33,13 +35,13 @@ export function MenuItemCard({
   const mainDietary = item.dietaryTags.filter((t) => t !== "contains-garlic").slice(0, 3);
 
   return (
-    <article className="group flex gap-4 sm:gap-5">
+    <article className="group flex gap-3 sm:gap-4 md:gap-5">
       {/* Image */}
       <button
         type="button"
         onClick={() => onSelect(item)}
         aria-label={`View details for ${item.name}`}
-        className="relative shrink-0 w-32 sm:w-40 md:w-48 overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+        className="relative shrink-0 w-28 sm:w-36 md:w-44 overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       >
         <MenuItemImage src={item.image} alt={item.name} />
         {!item.isAvailable && (
@@ -100,10 +102,11 @@ export function MenuItemCard({
           </span>
           <button
             type="button"
-            onClick={() => onSelect(item)}
+            onClick={() => onAddToCart(item)}
             disabled={!item.isAvailable}
-            aria-label={item.isAvailable ? `View ${item.name}` : `${item.name} sold out`}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-400 transition-all hover:border-stone-400 hover:text-stone-700 disabled:cursor-not-allowed disabled:opacity-40"
+            aria-label={item.isAvailable ? `Add ${item.name} to cart` : `${item.name} sold out`}
+            title={item.isAvailable ? "Add to cart" : "Sold out"}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 text-stone-400 transition-all hover:border-stone-400 hover:text-stone-700 disabled:cursor-not-allowed disabled:opacity-40 sm:h-9 sm:w-9"
           >
             <Plus className="h-4 w-4" />
           </button>

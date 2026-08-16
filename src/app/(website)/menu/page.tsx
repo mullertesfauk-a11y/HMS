@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { MenuHero } from "@/components/website/menu/menu-hero";
 import { MenuBrowser } from "@/components/website/menu/menu-browser";
 import { hotelService } from "@/server/services/hotel.service";
-import { MENU_CATEGORIES, MENU_ITEMS } from "@/lib/menu/menu-data";
+import { menuService } from "@/server/services/menu.service";
 
 export const dynamic = "force-dynamic";
 
@@ -16,8 +16,7 @@ export const metadata: Metadata = {
 
 export default async function MenuPage() {
   const hotel = await hotelService.getPublicHotel();
-
-  const activeCategories = MENU_CATEGORIES.filter((c) => c.isActive);
+  const menu = await menuService.getPublicMenu();
 
   return (
     <div className="bg-surface">
@@ -26,9 +25,10 @@ export default async function MenuPage() {
       {/* Spacer to pull content up slightly for visual overlap with hero, like the rooms page */}
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8 lg:py-12">
         <MenuBrowser
-          categories={activeCategories}
-          items={MENU_ITEMS}
+          categories={menu.categories}
+          items={menu.items}
           currency={hotel.currency}
+          taxRate={hotel.taxRate}
         />
       </div>
     </div>

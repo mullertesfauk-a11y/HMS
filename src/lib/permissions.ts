@@ -49,6 +49,14 @@ export const PERMISSIONS = {
   "staff.update": [UserRole.ADMIN],
   "staff.disable": [UserRole.ADMIN],
 
+  "orders.read": [UserRole.ADMIN, UserRole.STAFF],
+  "orders.update": [UserRole.ADMIN, UserRole.STAFF],
+
+  "menu.read": [UserRole.ADMIN, UserRole.STAFF],
+  "menu.create": [UserRole.ADMIN],
+  "menu.update": [UserRole.ADMIN],
+  "menu.delete": [UserRole.ADMIN],
+
   "settings.read": [UserRole.ADMIN],
   "settings.update": [UserRole.ADMIN],
 } as const satisfies Record<string, readonly Role[]>;

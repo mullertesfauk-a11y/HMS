@@ -71,6 +71,13 @@ export class InvalidReservationStateError extends ConflictError {
   }
 }
 
+/** An order state transition is not allowed. */
+export class InvalidOrderStateError extends ConflictError {
+  constructor(message = "Invalid order state transition") {
+    super(message, "INVALID_ORDER_STATE");
+  }
+}
+
 export class RateLimitError extends AppError {
   constructor(message = "Too many requests, please try again later") {
     super("RATE_LIMITED", message, 429);

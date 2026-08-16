@@ -15,6 +15,7 @@ export const auditRepository = {
     entityId?: string;
     userId?: string;
     reservationId?: string;
+    orderId?: string;
     oldData?: unknown;
     newData?: unknown;
     ipAddress?: string;
@@ -29,6 +30,7 @@ export const auditRepository = {
         entityId: params.entityId,
         userId: params.userId,
         reservationId: params.reservationId,
+        orderId: params.orderId,
         oldData: params.oldData === undefined ? undefined : (params.oldData as object),
         newData: params.newData === undefined ? undefined : (params.newData as object),
         ipAddress: params.ipAddress,
