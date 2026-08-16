@@ -15,9 +15,9 @@ const cspHeader = `
     default-src 'self';
     script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
     style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https://images.unsplash.com;
+    img-src 'self' blob: data: https://images.unsplash.com https://utfs.io;
     font-src 'self' data:;
-    connect-src 'self'${isDev ? " ws: http:" : ""};
+    connect-src 'self' https://utfs.io${isDev ? " ws: http:" : ""};
     object-src 'none';
     base-uri 'self';
     form-action 'self';

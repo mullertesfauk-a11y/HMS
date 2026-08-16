@@ -8,6 +8,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUpload } from "@/components/admin/menu/image-upload";
 import { DIETARY_TAGS, MENU_ITEM_BADGES } from "@/lib/menu/menu-types";
 import {
   createItem,
@@ -250,14 +251,7 @@ export function MenuItemForm({
           value={descriptionAm}
           onChange={(event) => setDescriptionAm(event.target.value)}
         />
-        <Input
-          name="image"
-          label="Image URL (optional)"
-          type="url"
-          placeholder="https://images.unsplash.com/…"
-          value={image}
-          onChange={(event) => setImage(event.target.value)}
-        />
+        <ImageUpload value={image} onChange={setImage} />
 
         <div className="grid grid-cols-2 gap-3">
           <Checkbox
