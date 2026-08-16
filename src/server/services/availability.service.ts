@@ -50,6 +50,7 @@ export interface AvailableRoomType {
   description: string | null;
   bedType: string;
   size: string | null;
+  imageUrl: string | null;
   maxAdults: number;
   maxChildren: number;
   basePrice: number;
@@ -123,6 +124,7 @@ export class AvailabilityService {
         description: roomType.description,
         bedType: roomType.bedType,
         size: roomType.size,
+        imageUrl: roomType.imageUrl,
         maxAdults: roomType.maxAdults,
         maxChildren: roomType.maxChildren,
         basePrice: pricePerNight,

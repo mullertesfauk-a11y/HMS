@@ -39,6 +39,7 @@ export interface PublicRoomType {
   maxChildren: number;
   bedType: string;
   size: string | null;
+  imageUrl: string | null;
   basePrice: number;
   amenities: { name: string; icon: string | null }[];
 }
@@ -124,6 +125,7 @@ export class HotelService {
     maxChildren: number;
     bedType: string;
     size: string | null;
+    imageUrl: string | null;
     basePrice: { toNumber(): number };
     amenities: { amenity: { name: string; icon: string | null } }[];
   }): PublicRoomType {
@@ -136,6 +138,7 @@ export class HotelService {
       maxChildren: roomType.maxChildren,
       bedType: roomType.bedType,
       size: roomType.size,
+      imageUrl: roomType.imageUrl,
       basePrice: roomType.basePrice.toNumber(),
       amenities: roomType.amenities.map((link) => ({
         name: link.amenity.name,

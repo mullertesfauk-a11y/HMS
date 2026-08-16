@@ -24,6 +24,7 @@ export async function createRoomType(input: {
   maxChildren?: number;
   bedType: string;
   size?: string;
+  imageUrl?: string;
   basePrice: number;
   status?: RoomTypeStatus;
   amenityIds?: string[];
@@ -52,6 +53,7 @@ export async function updateRoomType(
     maxChildren?: number;
     bedType?: string;
     size?: string;
+    imageUrl?: string;
     basePrice?: number;
     status?: RoomTypeStatus;
     amenityIds?: string[];

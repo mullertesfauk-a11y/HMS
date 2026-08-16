@@ -64,6 +64,8 @@ const ROOM_TYPES = [
     maxChildren: 1,
     bedType: "1 Queen Bed",
     size: "22 m²",
+    imageUrl:
+      "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?q=80&w=1500&auto=format&fit=crop",
     basePrice: 3200,
     amenities: ["wifi", "air-conditioning", "tv"],
     rooms: [
@@ -81,6 +83,8 @@ const ROOM_TYPES = [
     maxChildren: 2,
     bedType: "1 King Bed",
     size: "30 m²",
+    imageUrl:
+      "https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1500&auto=format&fit=crop",
     basePrice: 4800,
     amenities: ["wifi", "air-conditioning", "tv", "breakfast"],
     rooms: [
@@ -98,6 +102,8 @@ const ROOM_TYPES = [
     maxChildren: 2,
     bedType: "1 King Bed + Sofa Bed",
     size: "48 m²",
+    imageUrl:
+      "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?q=80&w=1500&auto=format&fit=crop",
     basePrice: 8500,
     amenities: ["wifi", "air-conditioning", "tv", "breakfast", "mini-bar"],
     rooms: [
@@ -150,6 +156,7 @@ async function main() {
         maxChildren: rt.maxChildren,
         bedType: rt.bedType,
         size: rt.size,
+        imageUrl: rt.imageUrl,
         basePrice: rt.basePrice,
       },
       create: {
@@ -162,6 +169,7 @@ async function main() {
         maxChildren: rt.maxChildren,
         bedType: rt.bedType,
         size: rt.size,
+        imageUrl: rt.imageUrl,
         basePrice: rt.basePrice,
       },
     });
@@ -191,6 +199,31 @@ async function main() {
       });
     }
     console.log(`  • Room type: ${rt.name} (${rt.rooms.length} rooms)`);
+  }
+
+  // The public site serves the FIRST hotel (hotelService.getDefaultHotel), so
+  // room type display data must also live under that hotel. On a transitional
+  // dev DB (an older pre-rebrand hotel created first) this differs from the
+  // hotel upserted above — same situation as the menu below.
+  const publicHotel = (await prisma.hotel.findFirst({ orderBy: { createdAt: "asc" } })) ?? hotel;
+  if (publicHotel.id !== hotel.id) {
+    for (const rt of ROOM_TYPES) {
+      await prisma.roomType.updateMany({
+        where: { hotelId: publicHotel.id, slug: rt.slug },
+        data: {
+          name: rt.name,
+          description: rt.description,
+          capacity: rt.capacity,
+          maxAdults: rt.maxAdults,
+          maxChildren: rt.maxChildren,
+          bedType: rt.bedType,
+          size: rt.size,
+          imageUrl: rt.imageUrl,
+          basePrice: rt.basePrice,
+        },
+      });
+    }
+    console.log(`  • Synced room type display data to served hotel (${publicHotel.slug})`);
   }
 
   // Menu categories + items

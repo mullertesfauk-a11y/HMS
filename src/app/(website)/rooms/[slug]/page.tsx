@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 
 import { BookingPanel } from "@/components/website/booking-panel";
 import { AvailabilitySearch } from "@/components/website/availability-search";
-import { Card, CardContent } from "@/components/ui/card";
 import { hotelDateToUtc } from "@/lib/dates";
 import { availabilityQuerySchema } from "@/lib/validation/availability";
 import { formatMoney } from "@/lib/utils/display";
@@ -63,8 +62,11 @@ export default async function RoomTypeDetailPage({
       {/* Hero Image */}
       <div className="relative h-[50vh] min-h-[400px] w-full bg-stone-900 overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=2500&auto=format&fit=crop"
-          alt="Room hero"
+          src={
+            roomType.imageUrl ??
+            "https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=2500&auto=format&fit=crop"
+          }
+          alt={`${roomType.name} hero`}
           className="absolute inset-0 h-full w-full object-cover object-center opacity-60 z-0"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent" />

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 
-import { EmptyState } from "@/components/admin/empty-state";
 import { AvailabilitySearch } from "@/components/website/availability-search";
 import { RoomTypeCard } from "@/components/website/room-type-card";
 import { hotelDateToUtc } from "@/lib/dates";
@@ -144,7 +143,7 @@ export default async function RoomsPage({
                       nights={roomType.nights}
                       availableRooms={roomType.availableRooms}
                       hrefQuery={hrefQuery}
-                      imageUrl={ROOM_IMAGES[index % ROOM_IMAGES.length]}
+                      imageUrl={roomType.imageUrl ?? ROOM_IMAGES[index % ROOM_IMAGES.length]}
                     />
                   ))
                 : browse!.map((roomType, index) => (
@@ -161,7 +160,7 @@ export default async function RoomsPage({
                       amenities={roomType.amenities}
                       currency={currency}
                       hrefQuery={hrefQuery}
-                      imageUrl={ROOM_IMAGES[index % ROOM_IMAGES.length]}
+                      imageUrl={roomType.imageUrl ?? ROOM_IMAGES[index % ROOM_IMAGES.length]}
                     />
                   ))}
             </div>

@@ -74,6 +74,7 @@ export default async function RoomTypeEditPage({
               maxChildren: roomType.maxChildren,
               bedType: roomType.bedType,
               size: roomType.size,
+              imageUrl: roomType.imageUrl,
               basePrice: roomType.basePrice.toNumber(),
               status: roomType.status,
               amenityIds: roomType.amenities.map((link) => link.amenityId),

@@ -24,6 +24,7 @@ export function RoomTypeForm({
     maxChildren: number;
     bedType: string;
     size: string | null;
+    imageUrl: string | null;
     basePrice: number;
     status: string;
     amenityIds: string[];
@@ -40,6 +41,7 @@ export function RoomTypeForm({
   const [maxChildren, setMaxChildren] = useState(roomType ? String(roomType.maxChildren) : "1");
   const [bedType, setBedType] = useState(roomType?.bedType ?? "");
   const [size, setSize] = useState(roomType?.size ?? "");
+  const [imageUrl, setImageUrl] = useState(roomType?.imageUrl ?? "");
   const [basePrice, setBasePrice] = useState(roomType ? String(roomType.basePrice) : "");
   const [status, setStatus] = useState(roomType?.status ?? "ACTIVE");
   const [amenityIds, setAmenityIds] = useState<string[]>(roomType?.amenityIds ?? []);
@@ -76,6 +78,7 @@ export function RoomTypeForm({
         maxChildren: childrenNum,
         bedType: bedType.trim(),
         size: size.trim() || undefined,
+        imageUrl: imageUrl.trim() || undefined,
         basePrice: priceNum,
         status: status as "ACTIVE" | "INACTIVE",
         amenityIds: amenityIds.length > 0 ? amenityIds : undefined,
@@ -143,6 +146,14 @@ export function RoomTypeForm({
           placeholder="e.g. 32 m²"
           value={size}
           onChange={(event) => setSize(event.target.value)}
+        />
+        <Input
+          name="imageUrl"
+          label="Image URL"
+          type="url"
+          placeholder="https://images.unsplash.com/…"
+          value={imageUrl}
+          onChange={(event) => setImageUrl(event.target.value)}
         />
         <Input
           name="basePrice"

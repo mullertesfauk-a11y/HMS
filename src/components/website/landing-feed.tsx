@@ -402,7 +402,7 @@ export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeed
             {/* Horizontal Scroll Carousel for Rooms */}
             <div className="no-scrollbar -mx-4 flex gap-4 overflow-x-auto px-4 pb-3 sm:mx-0 sm:px-0">
               {roomTypes.map((room, index) => {
-                const photo = ROOM_IMAGES[index % ROOM_IMAGES.length];
+                const photo = room.imageUrl ?? ROOM_IMAGES[index % ROOM_IMAGES.length];
                 const isFav = favorites.has(room.slug);
 
                 return (
