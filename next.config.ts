@@ -11,17 +11,17 @@ import type { NextConfig } from "next";
  */
 const isDev = process.env.NODE_ENV === "development";
 
+// UploadThing: the browser PUTs the file directly to the ingest host
+// (e.g. https://sea1.ingest.uploadthing.com). In dev the 'http:' scheme-source
+// below happens to also match https URLs (Chrome quirk), so uploads work
+// locally - but production drops it and the PUT gets blocked unless the host
+// is allowed explicitly.
 const cspHeader = `
     default-src 'self';
     script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: data: https://images.unsplash.com https://utfs.io;
     font-src 'self' data:;
-    // UploadThing: the browser PUTs the file directly to the ingest host
-    // (e.g. https://sea1.ingest.uploadthing.com). In dev the 'http:'
-    // scheme-source below happens to also match https URLs (Chrome quirk),
-    // so uploads work locally - but production drops it and the PUT gets
-    // blocked unless the host is allowed explicitly.
     connect-src 'self' https://utfs.io https://*.uploadthing.com${isDev ? " ws: http:" : ""};
     object-src 'none';
     base-uri 'self';
