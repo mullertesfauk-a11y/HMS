@@ -1,5 +1,16 @@
 import Link from "next/link";
-import { CalendarCheck, CalendarX, DoorOpen, TrendingUp, Wallet } from "lucide-react";
+import {
+  ArrowUpRight,
+  Bed,
+  CalendarCheck,
+  CalendarX,
+  CheckCircle2,
+  Clock,
+  DoorOpen,
+  Sparkles,
+  TrendingUp,
+  Wallet,
+} from "lucide-react";
 
 import { ReservationsTable } from "@/components/admin/reservations/reservations-table";
 import { toAdminReservationRow } from "@/server/services/reservation.admin-view";
@@ -9,6 +20,7 @@ import { ReservationStatus } from "@/generated/prisma/client";
 import { reservationRepository } from "@/server/repositories/reservation.repository";
 import { hotelService } from "@/server/services/hotel.service";
 import { formatMoney } from "@/lib/utils/display";
+import { Card } from "@/components/ui/card";
 
 /** Today's date in the hotel's timezone, as YYYY-MM-DD. */
 function todayInTimezone(timezone: string): string {
@@ -62,94 +74,150 @@ export default async function DashboardPage() {
     .filter((item) => item.status === ReservationStatus.PENDING || item.status === ReservationStatus.CONFIRMED)
     .map(toAdminReservationRow);
 
-  const tiles = [
+  const kpis = [
     {
-      label: "Today's arrivals",
+      label: "Today's Arrivals",
       value: String(metrics.arrivalsToday),
       href: "/admin/reservations?arrival=today",
       icon: CalendarCheck,
       hint: "Stays starting today",
+      accent: "text-emerald-600 bg-emerald-50 border-emerald-100",
     },
     {
-      label: "Today's departures",
+      label: "Today's Departures",
       value: String(metrics.departuresToday),
       href: "/admin/reservations?departure=today",
       icon: CalendarX,
       hint: "Stays ending today",
+      accent: "text-amber-600 bg-amber-50 border-amber-100",
     },
     {
-      label: "Occupancy",
+      label: "Occupancy Rate",
       value: `${metrics.occupancy.percentage}%`,
       href: "/admin/rooms?status=OCCUPIED",
       icon: DoorOpen,
-      hint: `${metrics.occupancy.occupied} of ${metrics.occupancy.total} rooms`,
+      hint: `${metrics.occupancy.occupied} of ${metrics.occupancy.total} rooms occupied`,
+      accent: "text-brand-dark bg-brand-light border-brand/20",
     },
     {
-      label: "Available rooms",
+      label: "Available Rooms",
       value: String(metrics.availableRooms),
       href: "/admin/rooms?status=AVAILABLE",
-      icon: DoorOpen,
-      hint: "Housekeeping status",
+      icon: Bed,
+      hint: "Ready for guest check-in",
+      accent: "text-blue-600 bg-blue-50 border-blue-100",
     },
     {
-      label: "Pending",
+      label: "Pending Booking",
       value: String(metrics.pendingReservations),
       href: "/admin/reservations?status=PENDING",
-      icon: Wallet,
-      hint: "Awaiting confirmation",
+      icon: Clock,
+      hint: "Awaiting front desk action",
+      accent: "text-amber-700 bg-amber-50/70 border-amber-200/60",
     },
     {
-      label: "Confirmed",
+      label: "Confirmed Stays",
       value: String(metrics.confirmedReservations),
       href: "/admin/reservations?status=CONFIRMED",
-      icon: TrendingUp,
-      hint: "Guaranteed stays",
+      icon: CheckCircle2,
+      hint: "Guaranteed upcoming stays",
+      accent: "text-emerald-700 bg-emerald-50/70 border-emerald-200/60",
     },
     {
-      label: "Revenue in house",
+      label: "In-House Revenue",
       value: formatMoney(metrics.revenueToday.amount, metrics.revenueToday.currency),
       href: "/admin/reservations?status=CHECKED_IN",
       icon: Wallet,
-      hint: "Booking value of in-house guests",
+      hint: "Active in-house booking value",
+      accent: "text-brand-dark bg-brand-light border-brand/20",
     },
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-foreground">Dashboard</h1>
-        <p className="mt-0.5 text-sm text-stone-500">
-          Operational overview for {formatDateFriendly(today)}.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-7">
-      {tiles.map((tile) => {
-        const Icon = tile.icon;
-        return (
-          <Link
-            key={tile.label}
-            href={tile.href}
-            className="rounded-lg border border-stone-200 bg-white p-4 transition-colors hover:border-brand/40 hover:bg-brand-light/30"
-          >
-            <Icon aria-hidden className="h-4 w-4 text-stone-400" />
-            <p className="mt-3 text-2xl font-semibold tracking-tight text-foreground">
-              {tile.value}
-            </p>
-            <p className="mt-0.5 text-sm font-medium text-stone-700">{tile.label}</p>
-            <p className="mt-0.5 text-xs text-stone-500">{tile.hint}</p>
-          </Link>
-        );
-      })}
-      </div>
-
-      <section className="space-y-3" aria-labelledby="arrivals-heading">
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 id="arrivals-heading" className="text-base font-semibold text-foreground">
-            Today&apos;s arrivals
-          </h2>
-          <p className="text-sm text-stone-500">Guests checking in today.</p>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+            Property Overview
+          </h1>
+          <p className="mt-1 text-xs sm:text-sm text-stone-500">
+            Operations summary for <span className="font-medium text-stone-800">{formatDateFriendly(today)}</span>
+          </p>
         </div>
+
+        <div className="flex items-center gap-2.5">
+          <Link
+            href="/admin/reservations"
+            className="inline-flex items-center gap-2 rounded-md border border-border bg-white px-3.5 py-2 text-xs font-semibold text-stone-700 shadow-2xs hover:bg-surface-subtle hover:text-stone-900 transition-colors"
+          >
+            Manage Reservations
+          </Link>
+          <Link
+            href="/admin/rooms"
+            className="inline-flex items-center gap-2 rounded-md bg-brand px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-dark transition-all"
+          >
+            Room Status
+            <ArrowUpRight className="h-3.5 w-3.5 opacity-80" />
+          </Link>
+        </div>
+      </div>
+
+      {/* KPI Cards Grid */}
+      <section aria-labelledby="kpi-heading" className="space-y-3">
+        <h2 id="kpi-heading" className="sr-only">Key Performance Indicators</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3.5">
+          {kpis.map((kpi) => {
+            const Icon = kpi.icon;
+            return (
+              <Link
+                key={kpi.label}
+                href={kpi.href}
+                className="group relative flex flex-col justify-between rounded-lg border border-border bg-white p-4.5 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-md"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-medium text-stone-500 group-hover:text-stone-700 transition-colors">
+                    {kpi.label}
+                  </span>
+                  <div
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-xs ${kpi.accent}`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <p className="text-2xl font-bold tracking-tight text-foreground">
+                    {kpi.value}
+                  </p>
+                  <p className="mt-1 text-[11px] text-stone-500 font-medium truncate">
+                    {kpi.hint}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Today's Arrivals Section */}
+      <section className="space-y-3.5" aria-labelledby="arrivals-heading">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 id="arrivals-heading" className="text-base font-semibold text-foreground">
+              Today&apos;s Arrivals
+            </h2>
+            <p className="text-xs text-stone-500">Guests scheduled to check in today.</p>
+          </div>
+          <Link
+            href="/admin/reservations?arrival=today"
+            className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:text-brand-dark transition-colors"
+          >
+            <span>View all arrivals</span>
+            <ArrowUpRight className="h-3 w-3" />
+          </Link>
+        </div>
+
         <ReservationsTable
           rows={arrivalsRows}
           currency={hotel.currency}
@@ -161,13 +229,24 @@ export default async function DashboardPage() {
         />
       </section>
 
-      <section className="space-y-3" aria-labelledby="upcoming-heading">
-        <div>
-          <h2 id="upcoming-heading" className="text-base font-semibold text-foreground">
-            Upcoming reservations
-          </h2>
-          <p className="text-sm text-stone-500">Pending and confirmed stays from today onward.</p>
+      {/* Upcoming Reservations Section */}
+      <section className="space-y-3.5" aria-labelledby="upcoming-heading">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 id="upcoming-heading" className="text-base font-semibold text-foreground">
+              Upcoming Reservations
+            </h2>
+            <p className="text-xs text-stone-500">Pending and confirmed stays from today onward.</p>
+          </div>
+          <Link
+            href="/admin/reservations"
+            className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:text-brand-dark transition-colors"
+          >
+            <span>All reservations</span>
+            <ArrowUpRight className="h-3 w-3" />
+          </Link>
         </div>
+
         <ReservationsTable
           rows={upcomingRows}
           currency={hotel.currency}
@@ -190,3 +269,4 @@ function formatDateFriendly(value: string): string {
     timeZone: "UTC",
   }).format(new Date(`${value}T00:00:00Z`));
 }
+

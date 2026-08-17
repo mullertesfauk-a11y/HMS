@@ -75,12 +75,12 @@ export function DataTable<TData extends RowData>({
   const rows = table.getRowModel().rows;
 
   return (
-    <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
+    <div className="overflow-hidden rounded-lg border border-border bg-white">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse text-sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id} className="border-b border-stone-200 bg-stone-50">
+              <tr key={headerGroup.id} className="border-b border-border bg-surface-subtle">
                 {headerGroup.headers.map((header) => {
                   const columnId = header.column.id;
                   const sortable = Boolean(onSortChange) && header.column.getCanSort();
@@ -120,18 +120,18 @@ export function DataTable<TData extends RowData>({
               </tr>
             ))}
           </thead>
-          <tbody className="divide-y divide-stone-100">
+          <tbody className="divide-y divide-border-subtle">
             {rows.map((row) => (
               <tr
                 key={row.id}
                 onClick={onRowClick ? () => onRowClick(row.original) : undefined}
                 className={cn(
                   "transition-colors",
-                  onRowClick && "cursor-pointer hover:bg-stone-50",
+                  onRowClick && "cursor-pointer hover:bg-surface-subtle",
                 )}
               >
                 {row.getAllCells().map((cell) => (
-                  <td key={cell.id} className="whitespace-nowrap px-4 py-3 text-stone-700">
+                  <td key={cell.id} className="whitespace-nowrap px-4 py-3.5 text-stone-700">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}

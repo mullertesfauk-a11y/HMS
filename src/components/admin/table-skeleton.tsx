@@ -8,11 +8,11 @@ export function TableSkeleton({
   columns?: number;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-stone-200 bg-white">
-      <div className="border-b border-stone-200 bg-stone-50 px-4 py-2.5">
+    <div className="overflow-hidden rounded-lg border border-border bg-white">
+      <div className="border-b border-border bg-surface-subtle px-4 py-2.5">
         <Skeleton className="h-3 w-40" />
       </div>
-      <div className="divide-y divide-stone-100">
+      <div className="divide-y divide-border-subtle">
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className="flex items-center gap-6 px-4 py-3.5">
             {Array.from({ length: columns }).map((_, columnIndex) => (
