@@ -191,7 +191,8 @@ export function CategoryManager({ categories }: { categories: CategoryRow[] }) {
       <Dialog
         open={formOpen}
         onOpenChange={setFormOpen}
-        title={editing ? `Edit ${editing.name}` : "New category"}
+        size="2xl"
+        title={editing ? `Edit ${editing.name}` : "New Category"}
         description="Categories appear in the public menu navigation, sorted by order."
         footer={
           <>
@@ -204,58 +205,68 @@ export function CategoryManager({ categories }: { categories: CategoryRow[] }) {
               loading={pending}
               disabled={!name.trim() || !nameAm.trim()}
             >
-              {editing ? "Save changes" : "Create category"}
+              {editing ? "Save Changes" : "Create Category"}
             </Button>
           </>
         }
       >
         <form id="category-form" onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            name="name"
-            label="Name"
-            placeholder="e.g. Ethiopian Favorites"
-            value={name}
-            onChange={(event) => handleNameChange(event.target.value)}
-            required
-          />
-          <Input
-            name="nameAm"
-            label="Amharic name"
-            placeholder="e.g. ባህላዊ ምግቦች"
-            value={nameAm}
-            onChange={(event) => setNameAm(event.target.value)}
-            required
-          />
-          <Input
-            name="slug"
-            label="Slug"
-            hint="Stable public reference. Lowercase kebab-case."
-            value={slug}
-            onChange={(event) => setSlug(event.target.value)}
-            disabled={Boolean(editing)}
-            required
-            pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-          />
-          <div className="flex items-end gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <Input
-              name="sortOrder"
-              label="Sort order"
-              type="number"
-              min={0}
-              max={999}
-              value={sortOrder}
-              onChange={(event) => setSortOrder(event.target.value)}
-              className="w-32"
+              name="name"
+              label="Category Name"
+              placeholder="e.g. Traditional Classics"
+              value={name}
+              onChange={(event) => handleNameChange(event.target.value)}
+              required
             />
+            <Input
+              name="nameAm"
+              label="Amharic Name"
+              placeholder="e.g. ባህላዊ ምግቦች"
+              value={nameAm}
+              onChange={(event) => setNameAm(event.target.value)}
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 items-start">
+            <div className="sm:col-span-2">
+              <Input
+                name="slug"
+                label="Slug"
+                hint="Stable public reference (lowercase kebab-case)."
+                value={slug}
+                onChange={(event) => setSlug(event.target.value)}
+                disabled={Boolean(editing)}
+                required
+                pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+              />
+            </div>
+            <div>
+              <Input
+                name="sortOrder"
+                label="Sort Order"
+                type="number"
+                min={0}
+                max={999}
+                value={sortOrder}
+                onChange={(event) => setSortOrder(event.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-border bg-stone-50/60 p-3.5">
             <Checkbox
               name="isActive"
-              label="Visible on the public menu"
+              label="Visible on the public menu catalog"
               checked={isActive}
               onChange={(event) => setIsActive(event.target.checked)}
             />
           </div>
+
           {error ? (
-            <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+            <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700 border border-red-200">
               {error}
             </p>
           ) : null}

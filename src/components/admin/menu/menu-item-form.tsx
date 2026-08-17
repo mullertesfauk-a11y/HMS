@@ -148,8 +148,9 @@ export function MenuItemForm({
       onOpenChange={(open) => {
         if (!open) onClose();
       }}
-      title={item ? `Edit ${item.name}` : "New menu item"}
-      description="Prices are shown to guests as-is; the server recalculates all order totals."
+      size="3xl"
+      title={item ? `Edit ${item.name}` : "New Menu Item"}
+      description="Configure menu item pricing, descriptions, dietary flags, and image showcase."
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>
@@ -161,145 +162,160 @@ export function MenuItemForm({
             loading={pending}
             disabled={!name.trim() || !nameAm.trim() || !description.trim()}
           >
-            {item ? "Save changes" : "Create item"}
+            {item ? "Save Changes" : "Create Item"}
           </Button>
         </>
       }
     >
-      <form id="menu-item-form" onSubmit={handleSubmit} className="max-h-[60vh] space-y-4 overflow-y-auto pr-1">
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            name="name"
-            label="Name"
-            placeholder="e.g. Doro Wot"
-            value={name}
-            onChange={(event) => handleNameChange(event.target.value)}
-            required
-          />
-          <Input
-            name="nameAm"
-            label="Amharic name"
-            placeholder="e.g. ዶሮ ወጥ"
-            value={nameAm}
-            onChange={(event) => setNameAm(event.target.value)}
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            name="slug"
-            label="Slug"
-            hint="Lowercase kebab-case."
-            value={slug}
-            onChange={(event) => setSlug(event.target.value)}
-            disabled={Boolean(item)}
-            required
-            pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
-          />
-          <Select
-            name="categoryId"
-            label="Category"
-            value={categoryId}
-            onChange={(event) => setCategoryId(event.target.value)}
-            required
-          >
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3">
-          <Input
-            name="price"
-            label="Price"
-            type="number"
-            min={0.01}
-            step="0.01"
-            placeholder="e.g. 780"
-            value={price}
-            onChange={(event) => setPrice(event.target.value)}
-            required
-          />
-          <Input
-            name="sortOrder"
-            label="Sort order"
-            type="number"
-            min={0}
-            max={999}
-            value={sortOrder}
-            onChange={(event) => setSortOrder(event.target.value)}
-          />
-        </div>
-
-        <Textarea
-          name="description"
-          label="Description"
-          rows={2}
-          placeholder="Describe the dish…"
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          required
-        />
-        <Textarea
-          name="descriptionAm"
-          label="Amharic description (optional)"
-          rows={2}
-          value={descriptionAm}
-          onChange={(event) => setDescriptionAm(event.target.value)}
-        />
-        <ImageUpload value={image} onChange={setImage} />
-
-        <div className="grid grid-cols-2 gap-3">
-          <Checkbox
-            name="isAvailable"
-            label="Available for ordering"
-            checked={isAvailable}
-            onChange={(event) => setIsAvailable(event.target.checked)}
-          />
-          <Checkbox
-            name="isFeatured"
-            label="Featured (Chef's Favorites)"
-            checked={isFeatured}
-            onChange={(event) => setIsFeatured(event.target.checked)}
-          />
-        </div>
-
-        <div>
-          <p className="text-sm font-medium text-stone-700">Dietary tags</p>
-          <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
-            {DIETARY_TAGS.map((tag) => (
-              <Checkbox
-                key={tag}
-                name={`dietary-${tag}`}
-                label={DIETARY_LABELS[tag]}
-                checked={dietaryTags.includes(tag)}
-                onChange={() => toggleTag(tag)}
+      <form id="menu-item-form" onSubmit={handleSubmit} className="w-full space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start w-full">
+          {/* Left Column: General Info, Pricing, Description */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                name="name"
+                label="Item Name"
+                placeholder="e.g. Doro Wot"
+                value={name}
+                onChange={(event) => handleNameChange(event.target.value)}
+                required
               />
-            ))}
+              <Input
+                name="nameAm"
+                label="Amharic Name"
+                placeholder="e.g. ዶሮ ወጥ"
+                value={nameAm}
+                onChange={(event) => setNameAm(event.target.value)}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                name="slug"
+                label="Slug"
+                hint="Lowercase kebab-case."
+                value={slug}
+                onChange={(event) => setSlug(event.target.value)}
+                disabled={Boolean(item)}
+                required
+                pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+              />
+              <Select
+                name="categoryId"
+                label="Category"
+                value={categoryId}
+                onChange={(event) => setCategoryId(event.target.value)}
+                required
+              >
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Input
+                name="price"
+                label="Price (ETB)"
+                type="number"
+                min={0.01}
+                step="0.01"
+                placeholder="e.g. 780"
+                value={price}
+                onChange={(event) => setPrice(event.target.value)}
+                required
+              />
+              <Input
+                name="sortOrder"
+                label="Sort Order"
+                type="number"
+                min={0}
+                max={999}
+                value={sortOrder}
+                onChange={(event) => setSortOrder(event.target.value)}
+              />
+            </div>
+
+            <Textarea
+              name="description"
+              label="Description"
+              rows={3}
+              placeholder="Describe the dish, ingredients, and presentation…"
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              required
+            />
+            <Textarea
+              name="descriptionAm"
+              label="Amharic Description (optional)"
+              rows={2}
+              placeholder="የምግብ ዝርዝር መግለጫ…"
+              value={descriptionAm}
+              onChange={(event) => setDescriptionAm(event.target.value)}
+            />
           </div>
-        </div>
 
-        <div>
-          <p className="text-sm font-medium text-stone-700">Badges</p>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">
-            {MENU_ITEM_BADGES.map((badge) => (
-              <Checkbox
-                key={badge}
-                name={`badge-${badge}`}
-                label={BADGE_LABELS[badge]}
-                checked={badges.includes(badge)}
-                onChange={() => toggleBadge(badge)}
-              />
-            ))}
+          {/* Right Column: Media, Status, Dietary & Badges */}
+          <div className="space-y-4">
+            <div className="rounded-lg border border-border bg-stone-50/50 p-4">
+              <ImageUpload value={image} onChange={setImage} />
+            </div>
+
+            <div className="rounded-lg border border-border bg-white p-4 space-y-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Availability &amp; Highlights</p>
+              <div className="space-y-2">
+                <Checkbox
+                  name="isAvailable"
+                  label="Available for guest ordering"
+                  checked={isAvailable}
+                  onChange={(event) => setIsAvailable(event.target.checked)}
+                />
+                <Checkbox
+                  name="isFeatured"
+                  label="Featured (Chef's Favorites Spotlight)"
+                  checked={isFeatured}
+                  onChange={(event) => setIsFeatured(event.target.checked)}
+                />
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-border bg-white p-4 space-y-2.5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Dietary Specifications</p>
+              <div className="grid grid-cols-2 gap-2">
+                {DIETARY_TAGS.map((tag) => (
+                  <Checkbox
+                    key={tag}
+                    name={`dietary-${tag}`}
+                    label={DIETARY_LABELS[tag]}
+                    checked={dietaryTags.includes(tag)}
+                    onChange={() => toggleTag(tag)}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-border bg-white p-4 space-y-2.5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500">Badges</p>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                {MENU_ITEM_BADGES.map((badge) => (
+                  <Checkbox
+                    key={badge}
+                    name={`badge-${badge}`}
+                    label={BADGE_LABELS[badge]}
+                    checked={badges.includes(badge)}
+                    onChange={() => toggleBadge(badge)}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
         {error ? (
-          <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700 border border-red-200">
             {error}
           </p>
         ) : null}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 
 import type { TableSort } from "@/components/admin/data-table";
 import { RoomsTable } from "@/components/admin/rooms/rooms-table";
@@ -62,19 +61,11 @@ export default async function RoomsPage({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-xl font-semibold text-foreground">Rooms</h1>
-          <p className="mt-0.5 text-sm text-stone-500">
-            Physical rooms, housekeeping status, and upcoming occupancy.
-          </p>
-        </div>
-        <Link
-          href="/admin/rooms/new"
-          className="rounded-md bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand-dark"
-        >
-          New room
-        </Link>
+      <div>
+        <h1 className="text-xl font-semibold text-foreground">Rooms</h1>
+        <p className="mt-0.5 text-sm text-stone-500">
+          Physical rooms, housekeeping status, and upcoming occupancy.
+        </p>
       </div>
 
       <RoomsToolbar options={filterOptions} />

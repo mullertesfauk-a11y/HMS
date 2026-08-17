@@ -46,7 +46,7 @@ export function MenuItemDetails({
       onClick={(e) => {
         if (e.target === ref.current) onClose();
       }}
-      className="m-0 mt-auto h-[92svh] w-full max-h-[92svh] overflow-y-auto rounded-t-3xl border border-stone-200 bg-white shadow-2xl backdrop:bg-black/40 sm:mt-auto sm:h-auto sm:max-h-[85vh] sm:w-full sm:max-w-lg sm:rounded-2xl sm:m-auto open:flex open:flex-col pb-safe"
+      className="m-0 mt-auto h-[92svh] w-full max-h-[92svh] overflow-y-auto rounded-t-3xl border border-stone-200 bg-white shadow-2xl backdrop:bg-black/40 sm:mt-auto sm:h-auto sm:max-h-[85vh] sm:w-full sm:max-w-xl md:max-w-2xl sm:rounded-2xl sm:m-auto open:flex open:flex-col pb-safe"
       aria-labelledby="menu-detail-title"
     >
       {/* Mobile drag handle */}
