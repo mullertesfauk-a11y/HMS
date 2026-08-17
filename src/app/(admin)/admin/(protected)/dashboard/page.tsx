@@ -7,8 +7,6 @@ import {
   CheckCircle2,
   Clock,
   DoorOpen,
-  Sparkles,
-  TrendingUp,
   Wallet,
 } from "lucide-react";
 
@@ -20,7 +18,6 @@ import { ReservationStatus } from "@/generated/prisma/client";
 import { reservationRepository } from "@/server/repositories/reservation.repository";
 import { hotelService } from "@/server/services/hotel.service";
 import { formatMoney } from "@/lib/utils/display";
-import { Card } from "@/components/ui/card";
 
 /** Today's date in the hotel's timezone, as YYYY-MM-DD. */
 function todayInTimezone(timezone: string): string {
