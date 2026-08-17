@@ -6,28 +6,28 @@
  * surface: pure/warm white · sidebar: deep warm charcoal
  */
 :root {
-  /* ─── Brand ────────────────────────────────────────── */
-  --background: #fafaf9;        /* stone-50 */
-  --foreground: #1c1917;        /* stone-900 */
-  --brand: #ff5400;             /* Vibrant orange */
+  /* ─── Brand (Preserved) ────────────────────────────── */
+  --background: #f8fafc;        /* slate-50 — crisp cool-neutral canvas */
+  --foreground: #0f172a;        /* slate-900 — rich deep slate navy text */
+  --brand: #ff5400;             /* Vibrant orange (primary preserved) */
   --brand-dark: #d94300;        /* Darker orange for hover */
   --brand-light: #fff2eb;       /* Soft orange tint */
   --brand-brass: #ea580c;       /* Warm orange-amber accent */
   --surface: #ffffff;
-  --surface-hover: #f5f5f4;     /* stone-100 */
+  --surface-hover: #f1f5f9;     /* slate-100 */
 
-  /* ─── Premium surface layers ───────────────────────── */
-  --surface-subtle: #f7f6f4;    /* warm off-white — table heads, input bg */
-  --border: #e7e5e4;            /* stone-200 — default border */
-  --border-subtle: #f0efed;     /* stone-100 — inner dividers */
+  /* ─── Premium surfaces (matching blue theme) ───────── */
+  --surface-subtle: #f0f4f9;    /* soft cool slate-blue — table heads, inputs */
+  --border: #e2e8f0;            /* slate-200 — crisp modern border */
+  --border-subtle: #f1f5f9;     /* slate-100 — inner dividers */
 
-  /* ─── Sidebar (luxury midnight navy / deep slate) ──── */
-  --sidebar: #0b132b;           /* Deep midnight navy — pairs with brand orange */
-  --sidebar-fg: #cbd5e1;        /* Slate-300 — cool clear nav text */
-  --sidebar-muted: #64748b;     /* Slate-500 — subtle section labels */
-  --sidebar-border: #1e293b;    /* Slate-800 — refined border */
-  --sidebar-active: rgba(255, 84, 0, 0.16); /* Warm brand orange glow */
-  --sidebar-hover: rgba(255, 255, 255, 0.06); /* Clean hover */
+  /* ─── Sidebar (vibrant cobalt blue #004fff) ───────── */
+  --sidebar: #004fff;           /* Vibrant cobalt electric blue */
+  --sidebar-fg: rgba(255, 255, 255, 0.85); /* Crisp white/ice text */
+  --sidebar-muted: rgba(255, 255, 255, 0.62); /* Soft white section labels */
+  --sidebar-border: rgba(255, 255, 255, 0.16); /* Translucent divider */
+  --sidebar-active: rgba(255, 255, 255, 0.2); /* Glass active state */
+  --sidebar-hover: rgba(255, 255, 255, 0.12); /* Glass hover state */
 }
 
 @theme inline {

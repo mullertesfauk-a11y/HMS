@@ -78,7 +78,7 @@ export default async function DashboardPage() {
       href: "/admin/reservations?arrival=today",
       icon: CalendarCheck,
       hint: "Stays starting today",
-      accent: "text-emerald-600 bg-emerald-50 border-emerald-100",
+      accent: "text-emerald-700 bg-emerald-50 border-emerald-200/70",
     },
     {
       label: "Today's Departures",
@@ -86,7 +86,7 @@ export default async function DashboardPage() {
       href: "/admin/reservations?departure=today",
       icon: CalendarX,
       hint: "Stays ending today",
-      accent: "text-amber-600 bg-amber-50 border-amber-100",
+      accent: "text-sky-700 bg-sky-50 border-sky-200/70",
     },
     {
       label: "Occupancy Rate",
@@ -94,7 +94,7 @@ export default async function DashboardPage() {
       href: "/admin/rooms?status=OCCUPIED",
       icon: DoorOpen,
       hint: `${metrics.occupancy.occupied} of ${metrics.occupancy.total} rooms occupied`,
-      accent: "text-brand-dark bg-brand-light border-brand/20",
+      accent: "text-[#004fff] bg-blue-50 border-blue-200/70",
     },
     {
       label: "Available Rooms",
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
       href: "/admin/rooms?status=AVAILABLE",
       icon: Bed,
       hint: "Ready for guest check-in",
-      accent: "text-blue-600 bg-blue-50 border-blue-100",
+      accent: "text-indigo-700 bg-indigo-50 border-indigo-200/70",
     },
     {
       label: "Pending Booking",
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
       href: "/admin/reservations?status=PENDING",
       icon: Clock,
       hint: "Awaiting front desk action",
-      accent: "text-amber-700 bg-amber-50/70 border-amber-200/60",
+      accent: "text-amber-700 bg-amber-50 border-amber-200/70",
     },
     {
       label: "Confirmed Stays",
@@ -118,7 +118,7 @@ export default async function DashboardPage() {
       href: "/admin/reservations?status=CONFIRMED",
       icon: CheckCircle2,
       hint: "Guaranteed upcoming stays",
-      accent: "text-emerald-700 bg-emerald-50/70 border-emerald-200/60",
+      accent: "text-emerald-700 bg-emerald-50 border-emerald-200/70",
     },
     {
       label: "In-House Revenue",
@@ -138,15 +138,15 @@ export default async function DashboardPage() {
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             Property Overview
           </h1>
-          <p className="mt-1 text-xs sm:text-sm text-stone-500">
-            Operations summary for <span className="font-medium text-stone-800">{formatDateFriendly(today)}</span>
+          <p className="mt-1 text-xs sm:text-sm text-slate-500">
+            Operations summary for <span className="font-medium text-slate-800">{formatDateFriendly(today)}</span>
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Link
             href="/admin/reservations"
-            className="inline-flex items-center gap-2 rounded-md border border-border bg-white px-3.5 py-2 text-xs font-semibold text-stone-700 shadow-2xs hover:bg-surface-subtle hover:text-stone-900 transition-colors"
+            className="inline-flex items-center gap-2 rounded-md border border-border bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-surface-subtle hover:text-slate-900 transition-colors"
           >
             Manage Reservations
           </Link>
@@ -170,10 +170,10 @@ export default async function DashboardPage() {
               <Link
                 key={kpi.label}
                 href={kpi.href}
-                className="group relative flex flex-col justify-between rounded-lg border border-border bg-white p-4.5 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-stone-300 hover:shadow-md"
+                className="group relative flex flex-col justify-between rounded-lg border border-border bg-white p-4.5 shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-medium text-stone-500 group-hover:text-stone-700 transition-colors">
+                  <span className="text-xs font-medium text-slate-500 group-hover:text-slate-700 transition-colors">
                     {kpi.label}
                   </span>
                   <div
@@ -187,7 +187,7 @@ export default async function DashboardPage() {
                   <p className="text-2xl font-bold tracking-tight text-foreground">
                     {kpi.value}
                   </p>
-                  <p className="mt-1 text-[11px] text-stone-500 font-medium truncate">
+                  <p className="mt-1 text-[11px] text-slate-500 font-medium truncate">
                     {kpi.hint}
                   </p>
                 </div>
@@ -204,11 +204,11 @@ export default async function DashboardPage() {
             <h2 id="arrivals-heading" className="text-base font-semibold text-foreground">
               Today&apos;s Arrivals
             </h2>
-            <p className="text-xs text-stone-500">Guests scheduled to check in today.</p>
+            <p className="text-xs text-slate-500">Guests scheduled to check in today.</p>
           </div>
           <Link
             href="/admin/reservations?arrival=today"
-            className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:text-brand-dark transition-colors"
+            className="inline-flex items-center gap-1 text-xs font-medium text-[#004fff] hover:underline transition-colors"
           >
             <span>View all arrivals</span>
             <ArrowUpRight className="h-3 w-3" />
@@ -233,11 +233,11 @@ export default async function DashboardPage() {
             <h2 id="upcoming-heading" className="text-base font-semibold text-foreground">
               Upcoming Reservations
             </h2>
-            <p className="text-xs text-stone-500">Pending and confirmed stays from today onward.</p>
+            <p className="text-xs text-slate-500">Pending and confirmed stays from today onward.</p>
           </div>
           <Link
             href="/admin/reservations"
-            className="inline-flex items-center gap-1 text-xs font-medium text-brand hover:text-brand-dark transition-colors"
+            className="inline-flex items-center gap-1 text-xs font-medium text-[#004fff] hover:underline transition-colors"
           >
             <span>All reservations</span>
             <ArrowUpRight className="h-3 w-3" />
