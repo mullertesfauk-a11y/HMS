@@ -70,14 +70,75 @@ export function AvailabilitySearch({
 
   const isCard = variant === "card";
 
+  if (!isCard) {
+    return (
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          <Input
+            name="checkIn"
+            label="Check-in Date"
+            type="date"
+            required
+            value={checkIn}
+            min={toDateInputValue(new Date())}
+            onChange={(event) => setCheckIn(event.target.value)}
+            className="w-full text-xs sm:text-sm"
+          />
+          <Input
+            name="checkOut"
+            label="Check-out Date"
+            type="date"
+            required
+            value={checkOut}
+            min={checkIn}
+            onChange={(event) => setCheckOut(event.target.value)}
+            className="w-full text-xs sm:text-sm"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3.5">
+          <Select
+            name="adults"
+            label="Adults"
+            value={adults}
+            onChange={(e) => setAdults(e.target.value)}
+          >
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <option key={n} value={n}>
+                {n} {n === 1 ? "Adult" : "Adults"}
+              </option>
+            ))}
+          </Select>
+
+          <Select
+            name="children"
+            label="Children"
+            value={children}
+            onChange={(e) => setChildren(e.target.value)}
+          >
+            {[0, 1, 2, 3, 4].map((n) => (
+              <option key={n} value={n}>
+                {n} {n === 1 ? "Child" : "Children"}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full h-11 bg-brand hover:bg-brand-dark text-white font-semibold text-xs uppercase tracking-widest transition-all shadow-sm"
+        >
+          <Search aria-hidden className="h-4 w-4 mr-2" />
+          Check Availability &amp; Rates
+        </Button>
+      </form>
+    );
+  }
+
   return (
     <form
       onSubmit={handleSubmit}
-      className={
-        isCard
-          ? "rounded-2xl border border-stone-200/90 bg-white/95 p-4 sm:p-6 lg:p-7 shadow-2xl shadow-stone-950/15 backdrop-blur-xl ring-1 ring-black/5"
-          : "flex flex-wrap items-end gap-3 rounded-lg border border-stone-200 bg-white p-4 shadow-sm"
-      }
+      className="rounded-2xl border border-stone-200/90 bg-white/95 p-4 sm:p-6 lg:p-7 shadow-2xl shadow-stone-950/15 backdrop-blur-xl ring-1 ring-black/5"
     >
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1.2fr_1.2fr_0.8fr_0.8fr_auto] lg:items-end">
         {/* Check-in */}
@@ -108,7 +169,7 @@ export function AvailabilitySearch({
           />
         </div>
 
-        {/* Guest counts - side-by-side on mobile */}
+        {/* Guest counts */}
         <div className="grid grid-cols-2 gap-3 sm:contents">
           <div className="w-full">
             <Select
@@ -144,7 +205,7 @@ export function AvailabilitySearch({
         <div className="w-full sm:col-span-2 lg:col-span-1 pt-1 sm:pt-0">
           <Button
             type="submit"
-            size={isCard ? "lg" : "md"}
+            size="lg"
             className="h-11 sm:h-12 w-full whitespace-nowrap bg-brand px-7 text-xs font-semibold uppercase tracking-widest text-white shadow-md transition-all duration-300 hover:bg-brand-dark hover:shadow-lg lg:w-auto"
           >
             <Search aria-hidden className="h-4 w-4 mr-2 shrink-0" />
@@ -153,18 +214,16 @@ export function AvailabilitySearch({
         </div>
       </div>
 
-      {isCard && (
-        <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-stone-100 pt-3 text-[11px] sm:text-xs text-stone-500">
-          <div className="flex items-center gap-1.5 text-center sm:text-left">
-            <CalendarDays aria-hidden className="h-3.5 w-3.5 text-brand-brass shrink-0" />
-            <span>Guaranteed best rates direct &bull; Instant confirmation</span>
-          </div>
-          <div className="flex items-center gap-3 text-stone-400 text-[10px] sm:text-[11px]">
-            <span>✦ No booking fees</span>
-            <span>✦ Flexible check-in</span>
-          </div>
+      <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-stone-100 pt-3 text-[11px] sm:text-xs text-stone-500">
+        <div className="flex items-center gap-1.5 text-center sm:text-left">
+          <CalendarDays aria-hidden className="h-3.5 w-3.5 text-brand-brass shrink-0" />
+          <span>Guaranteed best rates direct &bull; Instant confirmation</span>
         </div>
-      )}
+        <div className="flex items-center gap-3 text-stone-400 text-[10px] sm:text-[11px]">
+          <span>✦ No booking fees</span>
+          <span>✦ Flexible check-in</span>
+        </div>
+      </div>
     </form>
   );
 }
