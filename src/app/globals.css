@@ -21,12 +21,13 @@
   --border: #e7e5e4;            /* stone-200 — default border */
   --border-subtle: #f0efed;     /* stone-100 — inner dividers */
 
-  /* ─── Sidebar (deep warm charcoal) ─────────────────── */
-  --sidebar: #1c1917;           /* stone-900 — dark charcoal */
-  --sidebar-fg: #d6d3d1;        /* stone-300 — inactive nav text */
-  --sidebar-muted: #78716c;     /* stone-500 — section labels */
-  --sidebar-active: rgba(255, 84, 0, 0.15); /* brand-tinted active bg */
-  --sidebar-hover: rgba(255, 255, 255, 0.07); /* subtle hover */
+  /* ─── Sidebar (luxury midnight navy / deep slate) ──── */
+  --sidebar: #0b132b;           /* Deep midnight navy — pairs with brand orange */
+  --sidebar-fg: #cbd5e1;        /* Slate-300 — cool clear nav text */
+  --sidebar-muted: #64748b;     /* Slate-500 — subtle section labels */
+  --sidebar-border: #1e293b;    /* Slate-800 — refined border */
+  --sidebar-active: rgba(255, 84, 0, 0.16); /* Warm brand orange glow */
+  --sidebar-hover: rgba(255, 255, 255, 0.06); /* Clean hover */
 }
 
 @theme inline {
@@ -49,6 +50,7 @@
   --color-sidebar: var(--sidebar);
   --color-sidebar-fg: var(--sidebar-fg);
   --color-sidebar-muted: var(--sidebar-muted);
+  --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-active: var(--sidebar-active);
   --color-sidebar-hover: var(--sidebar-hover);
 
