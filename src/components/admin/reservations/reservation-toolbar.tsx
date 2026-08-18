@@ -1,12 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Search, X } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { cn } from "@/lib/utils/cn";
 
 export interface ReservationFilterOptions {
   statuses: string[];
@@ -19,7 +21,14 @@ export interface ReservationFilterOptions {
  * params so the server component re-fetches — one source of truth, and the
  * filters stay shareable/bookmarkable.
  */
-export function ReservationToolbar({ options }: { options: ReservationFilterOptions }) {
+export function ReservationToolbar({
+  options,
+  newReservationHref,
+}: {
+  options: ReservationFilterOptions;
+  /** When set, renders a "New Reservation" link to this href. */
+  newReservationHref?: string;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -172,6 +181,16 @@ export function ReservationToolbar({ options }: { options: ReservationFilterOpti
           <X aria-hidden className="h-3.5 w-3.5" />
           Clear filters
         </Button>
+      ) : null}
+
+      {newReservationHref ? (
+        <Link
+          href={newReservationHref}
+          className={cn(buttonVariants({ size: "sm" }), "ml-auto")}
+        >
+          <Plus aria-hidden className="h-3.5 w-3.5" />
+          New Reservation
+        </Link>
       ) : null}
     </div>
   );

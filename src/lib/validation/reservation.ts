@@ -28,6 +28,12 @@ export const createReservationSchema = z
     children: z.number().int().min(0).max(10).default(0),
     /** Public bookings select a RoomType (by slug); physical rooms are assigned internally. */
     roomTypeSlug: z.string().trim().min(1, "Room type is required"),
+    /**
+     * Optional physical room to pre-assign at creation (admin walk-in
+     * bookings). The service verifies it matches the room type and is free
+     * for the stay inside the reservation transaction.
+     */
+    roomId: z.string().trim().min(1, "Room is required").optional(),
     guest: guestDetailsSchema,
     specialRequests: z.string().trim().max(2000).optional(),
   })
@@ -37,6 +43,24 @@ export const createReservationSchema = z
   });
 
 export type CreateReservationInput = z.infer<typeof createReservationSchema>;
+
+/**
+ * Admin walk-in bookings must assign a specific physical room up front.
+ * Extends the public schema so server pricing/availability rules stay shared.
+ * `safeExtend` is required because the base schema carries refinements and
+ * this overrides the optional `roomId` key with a required one.
+ */
+export const adminCreateReservationSchema = createReservationSchema.safeExtend({
+  roomId: z.string().trim().min(1, "Select an available room"),
+  /**
+   * Walk-in guests are physically present — the reservation is created
+   * CHECKED_IN, skipping the pre-arrival flow. Set false for advance desk
+   * bookings (the stay starts PENDING as usual).
+   */
+  checkInNow: z.boolean().default(true),
+});
+
+export type AdminCreateReservationInput = z.infer<typeof adminCreateReservationSchema>;
 
 /** Public lookup/cancel use reservationNumber + lastName for privacy. */
 export const reservationLookupSchema = z.object({

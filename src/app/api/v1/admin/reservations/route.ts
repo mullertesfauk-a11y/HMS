@@ -68,12 +68,21 @@ export async function POST(request: NextRequest) {
       return handleError(parsed.error);
     }
 
+    // Admin API parity with the UI: `checkInNow` skips pre-arrival statuses
+    // (walk-in bookings start CHECKED_IN). Never trusted from the public API.
+    const checkInNow =
+      typeof body === "object" &&
+      body !== null &&
+      "checkInNow" in body &&
+      body.checkInNow === true;
+
     const hotel = await hotelService.getDefaultHotel();
     const reservation = await reservationService.createReservation(parsed.data, {
       hotelId: hotel.id,
       currency: hotel.currency,
       taxRate: hotel.taxRate.toNumber(),
       createdById: actor.id,
+      checkInNow,
       ipAddress: getClientIp(request),
       userAgent: request.headers.get("user-agent") ?? undefined,
     });

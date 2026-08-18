@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Clock,
   DoorOpen,
+  Plus,
   Wallet,
 } from "lucide-react";
 
@@ -145,6 +146,13 @@ export default async function DashboardPage() {
 
         <div className="flex items-center gap-2.5">
           <Link
+            href="/admin/reservations/new"
+            className="inline-flex items-center gap-2 rounded-md bg-brand px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-dark transition-all"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            New Booking
+          </Link>
+          <Link
             href="/admin/reservations"
             className="inline-flex items-center gap-2 rounded-md border border-border bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-surface-subtle hover:text-slate-900 transition-colors"
           >
@@ -152,7 +160,7 @@ export default async function DashboardPage() {
           </Link>
           <Link
             href="/admin/rooms"
-            className="inline-flex items-center gap-2 rounded-md bg-brand px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-brand-dark transition-all"
+            className="inline-flex items-center gap-2 rounded-md border border-border bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-2xs hover:bg-surface-subtle hover:text-slate-900 transition-colors"
           >
             Room Status
             <ArrowUpRight className="h-3.5 w-3.5 opacity-80" />

@@ -48,8 +48,10 @@ import type {
  *   5. structured log event
  *
  * Status changes go through the state machine in
- * src/lib/domain/reservation-status.ts. Rooms are assigned separately via
- * `assignRoom` (public bookings reserve a room TYPE, not a room number).
+ * src/lib/domain/reservation-status.ts. Public bookings reserve a room TYPE,
+ * not a room number; admin walk-in bookings can pass `roomId` to pre-assign a
+ * specific physical room inside the same transaction (otherwise rooms are
+ * assigned later via `assignRoom`).
  */
 
 const DETAIL_INCLUDE = {
@@ -93,6 +95,13 @@ export interface ReservationServiceContext {
   taxRate: number;
   /** When created by a staff member from the admin portal. */
   createdById?: string;
+  /**
+   * Create the reservation already CHECKED_IN (walk-in bookings). The guest
+   * is physically present, so the PENDING → CONFIRMED pre-arrival flow is
+   * skipped entirely; the stay still occupies inventory like any other
+   * active booking.
+   */
+  checkInNow?: boolean;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -131,6 +140,11 @@ export class ReservationService {
       numberOfNights: nights,
       taxRate: context.taxRate,
     });
+    // Walk-in bookings (guest physically present) start CHECKED_IN; all other
+    // reservations start PENDING and flow through the state machine.
+    const initialStatus = context.checkInNow
+      ? ReservationStatus.CHECKED_IN
+      : ReservationStatus.PENDING;
 
     const reservation = await prisma.$transaction(async (tx) => {
       // 1. Re-check availability inside the transaction (source of truth).
@@ -143,6 +157,42 @@ export class ReservationService {
         children: input.children,
         db: tx,
       });
+
+      // 1b. Admin walk-in bookings can pre-assign a specific physical room.
+      //     Same rules as `assignRoom` (matches the room type, bookable,
+      //     free for the stay), enforced atomically at creation.
+      let assignedRoom: { id: string; roomNumber: string } | null = null;
+      if (input.roomId) {
+        const room = await tx.room.findUnique({
+          where: { id: input.roomId },
+          select: {
+            id: true,
+            roomNumber: true,
+            status: true,
+            roomTypeId: true,
+            hotelId: true,
+          },
+        });
+        if (!room || room.hotelId !== context.hotelId) {
+          throw new NotFoundError("Room not found");
+        }
+        if (room.status === RoomStatus.MAINTENANCE || room.status === RoomStatus.OUT_OF_SERVICE) {
+          throw new ReservationConflictError("This room is not bookable");
+        }
+        if (room.roomTypeId !== roomType.id) {
+          throw new ConflictError("Room does not match the reserved room type");
+        }
+        const busyRoomIds = await reservationRepository.findOverlappingRoomIds({
+          roomTypeId: roomType.id,
+          checkIn,
+          checkOut,
+          db: tx,
+        });
+        if (busyRoomIds.includes(room.id)) {
+          throw new ReservationConflictError("This room is already booked for the stay dates");
+        }
+        assignedRoom = { id: room.id, roomNumber: room.roomNumber };
+      }
 
       // 2. Guest find-or-create (dedupe by email).
       const guest = await guestRepository.findOrCreate(
@@ -170,7 +220,7 @@ export class ReservationService {
           checkOut,
           adults: input.adults,
           children: input.children,
-          status: ReservationStatus.PENDING,
+          status: initialStatus,
           subtotal: pricing.subtotal,
           tax: pricing.tax,
           discount: pricing.discount,
@@ -181,6 +231,7 @@ export class ReservationService {
           rooms: {
             create: {
               roomTypeId: roomType.id,
+              ...(assignedRoom ? { roomId: assignedRoom.id } : {}),
               pricePerNight,
               numberOfNights: nights,
               subtotal: pricing.subtotal,
@@ -211,6 +262,7 @@ export class ReservationService {
           reservationNumber,
           status: created.status,
           roomTypeSlug: roomType.slug,
+          ...(assignedRoom ? { roomNumber: assignedRoom.roomNumber } : {}),
           checkIn: input.checkIn,
           checkOut: input.checkOut,
           nights,

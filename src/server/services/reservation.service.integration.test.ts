@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-import { ReservationStatus } from "@/generated/prisma/client";
+import { ReservationStatus, RoomStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { hotelDateToUtc } from "@/lib/dates";
 import {
@@ -54,6 +54,9 @@ describeDb("reservation service (DB)", () => {
     children?: number;
     checkIn?: string;
     checkOut?: string;
+    roomId?: string;
+    createdById?: string;
+    checkInNow?: boolean;
   }): Promise<Awaited<ReturnType<typeof reservationService.createReservation>>> {
     const reservation = await reservationService.createReservation(
       {
@@ -62,6 +65,7 @@ describeDb("reservation service (DB)", () => {
         adults: overrides?.adults ?? 2,
         children: overrides?.children ?? 0,
         roomTypeSlug: overrides?.roomTypeSlug ?? "suite",
+        ...(overrides?.roomId ? { roomId: overrides.roomId } : {}),
         guest: {
           firstName: "Rsv",
           lastName: "Test",
@@ -72,6 +76,8 @@ describeDb("reservation service (DB)", () => {
         hotelId,
         currency: hotelCurrency,
         taxRate: overrides?.taxRate ?? ctx.taxRate,
+        createdById: overrides?.createdById,
+        checkInNow: overrides?.checkInNow,
         ipAddress: ctx.ipAddress,
         userAgent: ctx.userAgent,
       },
@@ -434,5 +440,122 @@ describeDb("reservation service (DB)", () => {
     await expect(
       reservationService.assignRoom(checkedIn.id, deluxeRooms[2]!.id, actorId),
     ).rejects.toThrow(InvalidReservationStateError);
+  });
+
+  // -------------------------------------------------------------------------
+  // Walk-in bookings: reservation creation with a pre-assigned room
+  // -------------------------------------------------------------------------
+
+  it("creates a reservation with a pre-assigned room and staff attribution", async () => {
+    const reservation = await createReservation({
+      roomTypeSlug: "deluxe-room",
+      email: guestEmail("walkin"),
+      checkIn: "2027-05-01",
+      checkOut: "2027-05-04",
+      roomId: deluxeRooms[0]!.id,
+      createdById: actorId,
+    });
+
+    expect(reservation.status).toBe(ReservationStatus.PENDING);
+    expect(reservation.createdById).toBe(actorId);
+    expect(reservation.rooms[0]!.roomId).toBe(deluxeRooms[0]!.id);
+    expect(reservation.rooms[0]!.room?.roomNumber).toBe(deluxeRooms[0]!.roomNumber);
+  });
+
+  it("refuses to pre-assign a room that is already booked for the stay", async () => {
+    const checkIn = "2027-05-10";
+    const checkOut = "2027-05-13";
+    const first = await createReservation({
+      roomTypeSlug: "deluxe-room",
+      email: guestEmail("walkin-busy-a"),
+      checkIn,
+      checkOut,
+      roomId: deluxeRooms[0]!.id,
+    });
+    expect(first.rooms[0]!.roomId).toBe(deluxeRooms[0]!.id);
+
+    await expect(
+      createReservation({
+        roomTypeSlug: "deluxe-room",
+        email: guestEmail("walkin-busy-b"),
+        checkIn,
+        checkOut,
+        roomId: deluxeRooms[0]!.id,
+      }),
+    ).rejects.toThrow(ReservationConflictError);
+  });
+
+  it("refuses to pre-assign a room of the wrong type", async () => {
+    await expect(
+      createReservation({
+        roomTypeSlug: "suite",
+        email: guestEmail("walkin-wrong-type"),
+        checkIn: "2027-05-20",
+        checkOut: "2027-05-23",
+        roomId: standardRoom.id,
+      }),
+    ).rejects.toThrow(ConflictError);
+  });
+
+  it("refuses to pre-assign a maintenance room", async () => {
+    const maintenanceRoom = await prisma.room.create({
+      data: {
+        hotelId,
+        roomTypeId: standardId,
+        roomNumber: `MT-${randomUUID().slice(0, 4)}`,
+        status: RoomStatus.MAINTENANCE,
+      },
+    });
+    try {
+      await expect(
+        createReservation({
+          roomTypeSlug: "standard-room",
+          email: guestEmail("walkin-maint"),
+          checkIn: "2027-05-25",
+          checkOut: "2027-05-28",
+          roomId: maintenanceRoom.id,
+        }),
+      ).rejects.toThrow(ReservationConflictError);
+    } finally {
+      await prisma.room.delete({ where: { id: maintenanceRoom.id } });
+    }
+  });
+
+  it("creates a walk-in reservation already checked in when checkInNow is set", async () => {
+    const checkIn = "2027-06-01";
+    const checkOut = "2027-06-04";
+    const before = (
+      await availabilityService.searchAvailability({
+        hotelId,
+        checkIn: hotelDateToUtc(checkIn)!,
+        checkOut: hotelDateToUtc(checkOut)!,
+        adults: 2,
+        children: 0,
+      })
+    ).find((r) => r.id === deluxeId)!.availableRooms;
+
+    const reservation = await createReservation({
+      roomTypeSlug: "deluxe-room",
+      email: guestEmail("walkin-now"),
+      checkIn,
+      checkOut,
+      roomId: deluxeRooms[0]!.id,
+      createdById: actorId,
+      checkInNow: true,
+    });
+
+    expect(reservation.status).toBe(ReservationStatus.CHECKED_IN);
+    expect(reservation.rooms[0]!.roomId).toBe(deluxeRooms[0]!.id);
+    // CHECKED_IN stays occupy inventory exactly like any other active booking.
+    const after = (
+      await availabilityService.searchAvailability({
+        hotelId,
+        checkIn: hotelDateToUtc(checkIn)!,
+        checkOut: hotelDateToUtc(checkOut)!,
+        adults: 2,
+        children: 0,
+      })
+    ).find((r) => r.id === deluxeId)!.availableRooms;
+    expect(after).toBe(before - 1);
   });
 });

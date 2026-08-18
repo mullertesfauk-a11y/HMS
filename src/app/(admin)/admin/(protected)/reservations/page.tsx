@@ -136,7 +136,7 @@ export default async function ReservationsPage({
         </p>
       </div>
 
-      <ReservationToolbar options={filterOptions} />
+      <ReservationToolbar options={filterOptions} newReservationHref="/admin/reservations/new" />
 
       <Suspense fallback={<TableSkeleton rows={10} columns={10} />}>
         <ReservationsTable
