@@ -141,7 +141,7 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
   return (
     <div className="min-h-screen bg-stone-50/60 pb-24 md:pb-16 text-stone-900 selection:bg-brand-light selection:text-brand">
       {/* ── Main Feed Body ─────────────────────────────────────────────────── */}
-      <main className="mx-auto max-w-7xl px-4 pt-5 sm:px-8">
+      <main className="mx-auto max-w-7xl px-4 pt-8 sm:px-8">
         {/* ── 1ST HORIZONTAL SCROLLABLE LIST: ROOMS & SUITES (User Requirement) ── */}
         <section className="mb-8" aria-labelledby="rooms-heading">
             <div className="mb-3 flex items-center justify-between">
