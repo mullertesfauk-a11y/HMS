@@ -24,8 +24,8 @@ Single-package Next.js 16 (App Router) + React 19 + Tailwind v4 + Prisma 7 + Neo
 
 ## Environment
 
-- `cp .env.example .env`; required vars: `DATABASE_URL` (pooled), `DIRECT_URL` (direct), `BETTER_AUTH_SECRET` (≥32 chars). Production requires an `https://` `BETTER_AUTH_URL`.
-- Env is validated centrally in `src/lib/env.ts` and **throws at import time** if anything is missing/malformed. Never read `process.env` ad hoc — import `env` from `@/lib/env`.
+- `cp .env.example .env`; required vars: `DATABASE_URL` (pooled), `DIRECT_URL` (direct), `BETTER_AUTH_SECRET` (≥32 chars). Production additionally requires `BETTER_AUTH_URL` (or `NEXT_PUBLIC_APP_URL` as fallback) served over `https://` — loopback hosts are exempt. Uploadthing vars (`UPLOADTHING_TOKEN`/`UPLOADTHING_APP_ID`) are optional in dev, required at runtime for image uploads.
+- Env is validated centrally in `src/lib/env.ts` and **throws at import time** if anything is missing/malformed. Never read `process.env` ad hoc — import `env` from `@/lib/env` (server only). `NEXT_PUBLIC_*` vars are inlined by Next at build time for client code.
 - `.env` is gitignored; `.env.example` is the contract. `.npmrc` sets `legacy-peer-deps=true` — keep it.
 
 ## Prisma 7 quirks
@@ -43,7 +43,8 @@ Single-package Next.js 16 (App Router) + React 19 + Tailwind v4 + Prisma 7 + Neo
 
 ## Architecture rules (server-side)
 
-- Route handlers and server actions stay thin; business logic lives in `src/server/services/*` on top of thin `src/server/repositories/*` Prisma wrappers.
+- Route handlers and server actions stay thin; business logic lives in `src/server/services/*` on top of thin `src/server/repositories/*` Prisma wrappers. Public mutations are server actions in `src/app/(website)/actions.ts`; admin modules each have their own `actions.ts` under `src/app/(admin)/admin/(protected)/*`.
+- Orders (`orderService.createOrder`) are a parallel transactional domain to reservations, sharing the same service/repository layering. Domain logic (state machines, pricing, numbers) lives in `src/lib/domain/*` — e.g. `order-status.ts` for order transitions, `reservation-status.ts` for reservation transitions.
 - Reservation creation is one transaction: `reservationService.createReservation` (availability re-check, guest find-or-create, server pricing, reservation number, room-type line, PENDING payment, audit log). Client-supplied totals are never trusted.
 - Authorization is centralized in `src/lib/permissions.ts`. API routes use `requirePermission`/`requireRole` (throw 401/403); pages use `requirePermissionPage` (redirects). Add new permissions to the `PERMISSIONS` map — never spread role checks.
 - Public self-registration is disabled and `role`/`status` are `input: false` (no self-escalation). Staff accounts are created ADMIN-only via the Better Auth admin plugin.

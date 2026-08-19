@@ -5,30 +5,20 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   BedDouble,
-  Bell,
   CheckCircle2,
   Clock,
   Heart,
   Plus,
-  Search,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   Star,
   Users,
-  Utensils,
-  Wallet,
   ChevronRight,
-  Flame,
-  Coffee,
-  Salad,
-  Cake,
-  Wine,
-  Sparkle,
 } from "lucide-react";
 
 import type { PublicHotel, PublicRoomType } from "@/server/services/hotel.service";
-import type { MenuCategory, MenuItem } from "@/lib/menu/menu-types";
+import type { MenuItem } from "@/lib/menu/menu-types";
 import { formatMoney } from "@/lib/utils/display";
 import { cn } from "@/lib/utils/cn";
 import { MenuCart, type CartLine } from "@/components/website/menu/menu-cart";
@@ -85,20 +75,16 @@ function getRating(slug: string): { score: string; count: number } {
 export interface LandingFeedProps {
   hotel: PublicHotel;
   roomTypes: PublicRoomType[];
-  categories: MenuCategory[];
   items: MenuItem[];
 }
 
-export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeedProps) {
-  const [activeCategory, setActiveCategory] = React.useState<string>("all");
+export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
   const [favorites, setFavorites] = React.useState<Set<string>>(
     () => new Set(["ethiopian-1", "deluxe-room"]),
   );
   const [selectedItem, setSelectedItem] = React.useState<MenuItem | null>(null);
   const [cart, setCart] = React.useState<CartLine[]>([]);
   const [cartOpen, setCartOpen] = React.useState(false);
-  const [bellOpen, setBellOpen] = React.useState(false);
-  const [searchQuery, setSearchQuery] = React.useState("");
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.preventDefault();
@@ -142,163 +128,22 @@ export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeed
 
   const totalCartCount = cart.reduce((acc, line) => acc + line.quantity, 0);
 
-  // Filter items by category and search
-  const filteredItems = React.useMemo(() => {
-    let result = items;
-
-    if (activeCategory !== "all" && activeCategory !== "rooms") {
-      result = result.filter((i) => i.categoryId === activeCategory);
-    }
-
-    if (searchQuery.trim()) {
-      const query = searchQuery.trim().toLowerCase();
-      result = result.filter(
-        (i) =>
-          i.name.toLowerCase().includes(query) ||
-          i.nameAm.includes(query) ||
-          i.description.toLowerCase().includes(query),
-      );
-    }
-
-    return result;
-  }, [items, activeCategory, searchQuery]);
-
   const popularItems = React.useMemo(() => {
-    if (activeCategory !== "all" && activeCategory !== "rooms") {
-      return filteredItems;
-    }
     const featured = items.filter((i) => i.isFeatured || i.badges.includes("popular"));
     return featured.length > 0 ? featured : items.slice(0, 6);
-  }, [items, filteredItems, activeCategory]);
+  }, [items]);
 
-  const recommendedItems = React.useMemo(() => {
-    if (activeCategory !== "all" && activeCategory !== "rooms") {
-      return filteredItems.slice(popularItems.length);
-    }
-    return items.filter((i) => !popularItems.slice(0, 3).includes(i)).slice(0, 6);
-  }, [items, filteredItems, popularItems, activeCategory]);
-
-  // Combined category pills with icons
-  const allDisplayCategories = React.useMemo(() => {
-    const defaultIcons: Record<string, React.ReactNode> = {
-      all: <Sparkles className="h-4 w-4 text-brand-brass" />,
-      ethiopian: <Utensils className="h-4 w-4 text-brand-brass" />,
-      main: <Flame className="h-4 w-4 text-brand-brass" />,
-      starters: <Sparkle className="h-4 w-4 text-brand-brass" />,
-      rooms: <BedDouble className="h-4 w-4 text-brand-brass" />,
-      breakfast: <Coffee className="h-4 w-4 text-brand-brass" />,
-      vegetarian: <Salad className="h-4 w-4 text-brand-brass" />,
-      desserts: <Cake className="h-4 w-4 text-brand-brass" />,
-      drinks: <Wine className="h-4 w-4 text-brand-brass" />,
-    };
-
-    const list = [
-      { id: "all", slug: "all", name: "All", icon: defaultIcons.all },
-      { id: "ethiopian", slug: "ethiopian", name: "Traditional", icon: defaultIcons.ethiopian },
-      { id: "main", slug: "main", name: "Mains", icon: defaultIcons.main },
-      { id: "starters", slug: "starters", name: "Fast Food", icon: defaultIcons.starters },
-      { id: "rooms", slug: "rooms", name: "Suites & Rooms", icon: defaultIcons.rooms },
-    ];
-
-    for (const cat of categories) {
-      if (!list.some((c) => c.id === cat.id)) {
-        list.push({
-          id: cat.id,
-          slug: cat.slug,
-          name: cat.name,
-          icon: defaultIcons[cat.id] || <Utensils className="h-4 w-4 text-brand-brass" />,
-        });
-      }
-    }
-
-    return list;
-  }, [categories]);
+  const recommendedItems = React.useMemo(
+    () => items.filter((i) => !popularItems.slice(0, 3).includes(i)).slice(0, 6),
+    [items, popularItems],
+  );
 
   return (
     <div className="min-h-screen bg-stone-50/60 pb-24 md:pb-16 text-stone-900 selection:bg-brand-light selection:text-brand">
       {/* ── Main Feed Body ─────────────────────────────────────────────────── */}
       <main className="mx-auto max-w-7xl px-4 pt-5 sm:px-8">
-        {/* Top Search & Welcome Banner */}
-        <div className="mb-6 rounded-3xl border border-stone-200/80 bg-white p-4 sm:p-6 shadow-xs">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-stone-900">
-                Artisanal Dining &amp; Bespoke Suites
-              </h1>
-              <p className="mt-1 text-xs sm:text-sm text-stone-500 max-w-xl">
-                Experience authentic Ethiopian warmth, organic farm-to-table cuisine, and luxury accommodations at {hotel.name || "Gurja Hotel"}.
-              </p>
-            </div>
-
-            {/* Integrated Search Bar & Action Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-              <div className="relative w-full sm:w-72">
-                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                <input
-                  type="text"
-                  placeholder="Search dishes or suites…"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full rounded-2xl border border-stone-200 bg-stone-50/70 py-2.5 pl-9 pr-4 text-xs font-medium focus:border-brand focus:bg-white focus:outline-none transition-colors"
-                />
-              </div>
-
-              {totalCartCount > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setCartOpen(true)}
-                  aria-label="Open Shopping Cart"
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-brand/20 transition-all hover:bg-brand-dark active:scale-95"
-                >
-                  <ShoppingBag className="h-4 w-4" />
-                  <span>Cart ({totalCartCount})</span>
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Categories Pill Carousel ─────────────────────────────────────── */}
-        <section className="mb-6" aria-labelledby="categories-heading">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 id="categories-heading" className="text-lg sm:text-xl font-bold tracking-tight text-stone-900">
-              Categories
-            </h2>
-            <Link
-              href="/menu"
-              className="text-xs font-semibold text-brand-brass hover:text-brand transition-colors"
-            >
-              View all
-            </Link>
-          </div>
-
-          {/* Horizontal scrollable pills with scrollbar hidden */}
-          <div className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-            {allDisplayCategories.map((cat) => {
-              const isSelected = activeCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={cn(
-                    "flex shrink-0 items-center gap-2 rounded-2xl border px-4 py-2.5 text-xs font-semibold shadow-xs transition-all active:scale-95",
-                    isSelected
-                      ? "border-brand bg-brand text-white shadow-md shadow-brand/20"
-                      : "border-stone-200/80 bg-white text-stone-800 hover:border-stone-300 hover:bg-stone-50",
-                  )}
-                >
-                  <span className={cn(isSelected ? "text-white" : "")}>{cat.icon}</span>
-                  <span>{cat.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
         {/* ── 1ST HORIZONTAL SCROLLABLE LIST: ROOMS & SUITES (User Requirement) ── */}
-        {(activeCategory === "all" || activeCategory === "rooms") && (
-          <section className="mb-8" aria-labelledby="rooms-heading">
+        <section className="mb-8" aria-labelledby="rooms-heading">
             <div className="mb-3 flex items-center justify-between">
               <div>
                 <h2 id="rooms-heading" className="text-lg sm:text-xl font-bold tracking-tight text-stone-900">
@@ -406,11 +251,9 @@ export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeed
               })}
             </div>
           </section>
-        )}
 
         {/* ── 2ND HORIZONTAL SCROLLABLE LIST: POPULAR NEAR YOU ───────────────── */}
-        {activeCategory !== "rooms" && (
-          <section className="mb-8" aria-labelledby="popular-heading">
+        <section className="mb-8" aria-labelledby="popular-heading">
             <div className="mb-3 flex items-center justify-between">
               <div>
                 <h2 id="popular-heading" className="text-lg sm:text-xl font-bold tracking-tight text-stone-900">
@@ -520,10 +363,9 @@ export function LandingFeed({ hotel, roomTypes, categories, items }: LandingFeed
               })}
             </div>
           </section>
-        )}
 
         {/* ── RECOMMENDED FOR YOU SECTION (Vertical Stack Cards) ──────────────── */}
-        {activeCategory !== "rooms" && recommendedItems.length > 0 && (
+        {recommendedItems.length > 0 && (
           <section className="mb-10" aria-labelledby="recommended-heading">
             <div className="mb-4 flex items-center justify-between">
               <div>

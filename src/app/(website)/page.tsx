@@ -16,7 +16,6 @@ export default async function HomePage() {
     <LandingFeed
       hotel={hotel}
       roomTypes={roomTypes}
-      categories={menu.categories}
       items={menu.items}
     />
   );
