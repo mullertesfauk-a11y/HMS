@@ -1,9 +1,13 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { PublicHotel } from "@/server/services/hotel.service";
 import { HotelLogo } from "@/components/ui/hotel-logo";
 
 /** Public website footer: contact details and check-in/out times. */
 export function SiteFooter({ hotel }: { hotel: PublicHotel }) {
+  const t = useTranslations("footer");
+  const tNav = useTranslations("nav");
+
   const contact = [
     hotel.address && hotel.city ? `${hotel.address}, ${hotel.city}` : (hotel.address ?? hotel.city),
     hotel.country,
@@ -27,17 +31,17 @@ export function SiteFooter({ hotel }: { hotel: PublicHotel }) {
         </div>
         
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-white">Hotel</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-white">{t("hotel")}</p>
           <ul className="mt-6 space-y-3 text-sm">
-            <li><Link href="/rooms" className="transition-colors hover:text-brand-light">Rooms &amp; Suites</Link></li>
-            <li><Link href="/menu" className="transition-colors hover:text-brand-light">Dining Menu</Link></li>
-            <li><Link href="/reservation/lookup" className="transition-colors hover:text-brand-light">Find My Booking</Link></li>
+            <li><Link href="/rooms" className="transition-colors hover:text-brand-light">{tNav("rooms")}</Link></li>
+            <li><Link href="/menu" className="transition-colors hover:text-brand-light">{tNav("restaurant")}</Link></li>
+            <li><Link href="/reservation/lookup" className="transition-colors hover:text-brand-light">{tNav("findBooking")}</Link></li>
             <li><Link href="/table-qr" className="transition-colors hover:text-brand-light">Table QR Stand</Link></li>
           </ul>
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-white">Contact</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-white">{t("contact")}</p>
           <ul className="mt-6 space-y-3 text-sm">
             {contact.map((line) => (
               <li key={line}>{line}</li>
@@ -47,11 +51,11 @@ export function SiteFooter({ hotel }: { hotel: PublicHotel }) {
         
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest text-white">
-            Check-in &amp; Check-out
+            {t("checkInCheckOut")}
           </p>
           <ul className="mt-6 space-y-3 text-sm">
-            <li>Check-in from {hotel.checkInTime}</li>
-            <li>Check-out by {hotel.checkOutTime}</li>
+            <li>{t("checkInFrom", { time: hotel.checkInTime })}</li>
+            <li>{t("checkOutBy", { time: hotel.checkOutTime })}</li>
           </ul>
         </div>
       </div>
@@ -61,8 +65,8 @@ export function SiteFooter({ hotel }: { hotel: PublicHotel }) {
             © {new Date().getUTCFullYear()} {hotel.name}. All rights reserved.
           </p>
           <div className="flex gap-4 text-xs uppercase tracking-widest">
-            <Link href="#" className="transition-colors hover:text-white">Privacy</Link>
-            <Link href="#" className="transition-colors hover:text-white">Terms</Link>
+            <Link href="#" className="transition-colors hover:text-white">{t("privacy")}</Link>
+            <Link href="#" className="transition-colors hover:text-white">{t("terms")}</Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { AvailabilitySearch } from "@/components/website/availability-search";
 import { RoomTypeCard } from "@/components/website/room-type-card";
@@ -19,7 +20,10 @@ export default async function RoomsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const rawParams = await searchParams;
-  const hotel = await hotelService.getPublicHotel();
+  const [hotel, t] = await Promise.all([
+    hotelService.getPublicHotel(),
+    getTranslations("rooms"),
+  ]);
   const currency = hotel.currency;
 
   const parsed = availabilityQuerySchema.safeParse(rawParams);
@@ -45,11 +49,11 @@ export default async function RoomsPage({
     ? `${guestCount} guest${guestCount !== 1 ? "s" : ""} · ${formatDateFriendly(
         parsed.data.checkIn,
       )} → ${formatDateFriendly(parsed.data.checkOut)}`
-    : "Browse our rooms";
+    : t("browseTitle");
 
   const subtext = hasDates
     ? "Live availability and prices for your dates, taxes included."
-    : "Choose dates above to see real-time availability and stay totals.";
+    : t("chooseDatesAbove");
 
   const hrefQuery = hasDates
     ? {
@@ -81,12 +85,12 @@ export default async function RoomsPage({
             </span>
           </div>
           <h1 className="mt-4 font-luxury text-3xl font-normal uppercase tracking-[0.18em] text-white sm:text-5xl lg:text-6xl">
-            Suites &amp; Accommodations
+            {t("suitesTitle")}
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm sm:text-base text-stone-300">
             {hasDates
               ? "Available suites for your selected dates."
-              : "Discover our curated collection of luxury private sanctuaries in Shire, Tigray."}
+              : t("suitesSubtitle")}
           </p>
         </div>
       </div>
@@ -118,9 +122,9 @@ export default async function RoomsPage({
 
           {availability && availability.length === 0 ? (
             <div className="mt-12 py-16 text-center">
-              <h3 className="font-display text-2xl text-foreground">No rooms available</h3>
+              <h3 className="font-display text-2xl text-foreground">{t("noRooms")}</h3>
               <p className="mt-2 text-stone-500">
-                We could not find a room for these dates and guest count. Try different dates or fewer guests.
+                {t("noRoomsDesc")}
               </p>
             </div>
           ) : (

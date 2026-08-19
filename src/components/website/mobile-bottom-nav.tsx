@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Home, Compass, ClipboardList, User } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -12,6 +13,7 @@ export interface MobileBottomNavProps {
 
 export function MobileBottomNav({ cartCount = 0, onOpenOrders }: MobileBottomNavProps) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
 
   const isHome = pathname === "/";
   const isBrowse = pathname.startsWith("/menu") || pathname.startsWith("/rooms");
@@ -45,7 +47,7 @@ export function MobileBottomNav({ cartCount = 0, onOpenOrders }: MobileBottomNav
               isHome ? "font-bold text-brand" : "font-medium text-stone-500",
             )}
           >
-            Home
+            {t("home")}
           </span>
         </Link>
 
@@ -71,7 +73,7 @@ export function MobileBottomNav({ cartCount = 0, onOpenOrders }: MobileBottomNav
               isBrowse && !isHome ? "font-bold text-brand" : "font-medium text-stone-500",
             )}
           >
-            Browse
+            {t("restaurant")}
           </span>
         </Link>
 
@@ -90,7 +92,7 @@ export function MobileBottomNav({ cartCount = 0, onOpenOrders }: MobileBottomNav
             )}
           </div>
           <span className="text-[11px] font-medium text-stone-500 tracking-tight">
-            Orders
+            {t("findBooking")}
           </span>
         </button>
 
@@ -116,7 +118,7 @@ export function MobileBottomNav({ cartCount = 0, onOpenOrders }: MobileBottomNav
               isProfile ? "font-bold text-brand" : "font-medium text-stone-500",
             )}
           >
-            Profile
+            {t("findBooking")}
           </span>
         </Link>
       </nav>

@@ -1,6 +1,8 @@
 import type { PublicHotel } from "@/server/services/hotel.service";
+import { useTranslations } from "next-intl";
 
 export function MenuHero({ hotel }: { hotel: PublicHotel }) {
+  const t = useTranslations("menu");
   return (
     <section className="relative overflow-hidden bg-stone-950 py-14 sm:py-24 lg:py-28">
       <div className="absolute inset-0 z-0">
@@ -21,21 +23,19 @@ export function MenuHero({ hotel }: { hotel: PublicHotel }) {
         </div>
 
         <h1 className="mt-4 font-luxury text-2xl font-normal uppercase tracking-[0.14em] text-white sm:mt-5 sm:text-3xl md:text-4xl lg:text-5xl">
-          Our Menu
+          {t("ourMenu")}
         </h1>
 
         <div className="mt-2.5 flex items-center justify-center gap-2 sm:mt-3 sm:gap-3">
           <span className="h-[1px] w-5 sm:w-10 bg-amber-300/50" />
           <p className="text-[9px] font-semibold uppercase tracking-[0.24em] text-amber-300/80 sm:text-[10px] sm:tracking-[0.32em]">
-            Taste the Flavors of Ethiopia
+            {t("tasteFlavors")}
           </p>
           <span className="h-[1px] w-5 sm:w-10 bg-amber-300/50" />
         </div>
 
         <p className="mt-4 max-w-xl px-2 text-xs leading-relaxed text-stone-300 sm:mt-5 sm:px-0 sm:text-sm md:text-base">
-          Discover carefully prepared dishes made with fresh ingredients and
-          traditional Ethiopian flavors — from timeless classics to modern
-          hotel specialties.
+          {t("menuDesc")}
         </p>
       </div>
     </section>

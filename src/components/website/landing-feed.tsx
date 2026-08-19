@@ -16,6 +16,7 @@ import {
   Users,
   ChevronRight,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import type { PublicHotel, PublicRoomType } from "@/server/services/hotel.service";
 import type { MenuItem } from "@/lib/menu/menu-types";
@@ -79,6 +80,11 @@ export interface LandingFeedProps {
 }
 
 export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
+  const t = useTranslations("landing");
+  const tCommon = useTranslations("common");
+  const tNav = useTranslations("nav");
+  const tMenu = useTranslations("menu");
+
   const [favorites, setFavorites] = React.useState<Set<string>>(
     () => new Set(["ethiopian-1", "deluxe-room"]),
   );
@@ -147,17 +153,17 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
             <div className="mb-3 flex items-center justify-between">
               <div>
                 <h2 id="rooms-heading" className="text-lg sm:text-xl font-bold tracking-tight text-stone-900">
-                  Suites &amp; Accommodations
+                  {t("suitesTitle")}
                 </h2>
                 <p className="text-xs text-stone-500 font-medium hidden sm:block">
-                  Curated sanctuaries of rest with city &amp; mountain vistas
+                  {t("suitesSubtitle")}
                 </p>
               </div>
               <Link
                 href="/rooms"
                 className="text-xs font-semibold text-brand-brass hover:text-brand transition-colors"
               >
-                View all
+                {tCommon("viewAll")}
               </Link>
             </div>
 
@@ -203,7 +209,7 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
                         <span className="inline-flex items-center rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-stone-900 shadow-md backdrop-blur-md">
                           <span className="text-brand-brass mr-1">{hotel.currency}</span>
                           {room.basePrice.toLocaleString()}
-                          <span className="ml-1 text-[10px] font-normal text-stone-500">/ night</span>
+                          <span className="ml-1 text-[10px] font-normal text-stone-500">{tCommon("perNight")}</span>
                         </span>
                       </div>
                     </div>
@@ -241,7 +247,7 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
                           href={`/rooms/${room.slug}`}
                           className="inline-flex items-center gap-1 rounded-xl bg-stone-900 px-3.5 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-brand active:scale-95"
                         >
-                          <span>Explore</span>
+                          <span>{tCommon("explore")}</span>
                           <ChevronRight className="h-3.5 w-3.5" />
                         </Link>
                       </div>
@@ -257,10 +263,10 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
             <div className="mb-3 flex items-center justify-between">
               <div>
                 <h2 id="popular-heading" className="text-lg sm:text-xl font-bold tracking-tight text-stone-900">
-                  Popular Near You
+                  {t("popularTitle")}
                 </h2>
                 <p className="text-xs text-stone-500 font-medium hidden sm:block">
-                  Chef-curated Ethiopian specialties &amp; gourmet classics
+                  {t("popularSubtitle")}
                 </p>
               </div>
               <Link
@@ -370,10 +376,10 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
             <div className="mb-4 flex items-center justify-between">
               <div>
                 <h2 id="recommended-heading" className="text-lg sm:text-xl font-bold tracking-tight text-stone-900">
-                  Recommended For You
+                  {t("recommendedTitle")}
                 </h2>
                 <p className="text-xs text-stone-500 font-medium hidden sm:block">
-                  Hand-crafted delicacies prepared fresh upon request
+                  {t("recommendedSubtitle")}
                 </p>
               </div>
               <Link
@@ -486,10 +492,10 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
               </span>
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-stone-900">
-                  Best Rate Direct
+                  {t("bestRateDirect")}
                 </p>
                 <p className="text-[11px] text-stone-500">
-                  Direct booking guarantee &amp; bespoke room upgrades
+                  {t("bestRateDesc")}
                 </p>
               </div>
             </div>
@@ -500,10 +506,10 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
               </span>
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-stone-900">
-                  Authentic Dining
+                  {t("authenticDining")}
                 </p>
                 <p className="text-[11px] text-stone-500">
-                  Prepared with organic Tigrayan spices &amp; pure butter
+                  {t("authenticDiningDesc")}
                 </p>
               </div>
             </div>
@@ -514,10 +520,10 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
               </span>
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-stone-900">
-                  24/7 Dedicated Care
+                  {t("dedicatedCare")}
                 </p>
                 <p className="text-[11px] text-stone-500">
-                  In-room service and round-the-clock concierge
+                  {t("dedicatedCareDesc")}
                 </p>
               </div>
             </div>
@@ -541,7 +547,7 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
           >
             <span className="flex items-center gap-2.5 text-xs sm:text-sm font-semibold">
               <ShoppingBag className="h-4 w-4 text-brand-brass" />
-              {totalCartCount} {totalCartCount === 1 ? "dish" : "dishes"} selected
+              {totalCartCount} {t("dishesSelected")}
             </span>
             <span className="flex items-center gap-3">
               <span className="text-xs sm:text-sm font-bold text-amber-200">
@@ -551,7 +557,7 @@ export function LandingFeed({ hotel, roomTypes, items }: LandingFeedProps) {
                 )}
               </span>
               <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest">
-                Review Order
+                {t("reviewOrder")}
               </span>
             </span>
           </button>

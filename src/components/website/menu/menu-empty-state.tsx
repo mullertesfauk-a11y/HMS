@@ -1,6 +1,7 @@
 "use client";
 
 import { UtensilsCrossed } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 export function MenuEmptyState({
   type,
@@ -11,15 +12,18 @@ export function MenuEmptyState({
   query?: string;
   onClear?: () => void;
 }) {
+  const t = useTranslations("menu");
+  const tCommon = useTranslations("common");
+
   if (type === "no-results") {
     return (
       <div className="py-20 text-center">
         <UtensilsCrossed className="mx-auto h-10 w-10 text-stone-300" />
         <h3 className="mt-4 font-display text-xl text-stone-900">
-          No dishes found{query ? ` for "${query}"` : ""}
+          {t("noResults")}{query ? ` for "${query}"` : ""}
         </h3>
         <p className="mt-2 text-sm text-stone-500">
-          Try searching for another dish.
+          {t("noResultsDesc", { query: query ?? "" })}
         </p>
         {onClear && (
           <button
@@ -27,7 +31,7 @@ export function MenuEmptyState({
             onClick={onClear}
             className="mt-4 text-xs font-semibold uppercase tracking-widest text-brand hover:text-brand-dark transition-colors"
           >
-            Clear Search
+            {t("clearSearch")}
           </button>
         )}
       </div>
@@ -38,10 +42,10 @@ export function MenuEmptyState({
     <div className="py-20 text-center">
       <UtensilsCrossed className="mx-auto h-10 w-10 text-stone-300" />
       <h3 className="mt-4 font-display text-xl text-stone-900">
-        No dishes available
+        {t("noResults")}
       </h3>
       <p className="mt-2 text-sm text-stone-500">
-        The menu is currently being updated.
+        {t("noResultsDesc", { query: "" })}
       </p>
       {onClear && (
         <button
@@ -49,7 +53,7 @@ export function MenuEmptyState({
           onClick={onClear}
           className="mt-4 text-xs font-semibold uppercase tracking-widest text-brand hover:text-brand-dark transition-colors"
         >
-          View All
+          {tCommon("viewAll")}
         </button>
       )}
     </div>

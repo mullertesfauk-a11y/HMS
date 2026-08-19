@@ -3,6 +3,7 @@
 import React from "react";
 import { Minus, Plus, X } from "lucide-react";
 import type { MenuItem } from "@/lib/menu/menu-types";
+import { useTranslations } from "next-intl";
 import { formatMoney } from "@/lib/utils/display";
 import { DietaryBadge } from "@/components/website/menu/dietary-badge";
 
@@ -17,6 +18,7 @@ export function MenuItemDetails({
   onClose: () => void;
   onAddToCart: (item: MenuItem, quantity: number) => void;
 }) {
+  const t = useTranslations("menu");
   const ref = React.useRef<HTMLDialogElement>(null);
   const [imgLoaded, setImgLoaded] = React.useState(false);
   const [quantity, setQuantity] = React.useState(1);
@@ -131,7 +133,7 @@ export function MenuItemDetails({
         {item.dietaryTags.length > 0 && (
           <div className="mt-5">
             <h3 className="text-[10px] font-semibold uppercase tracking-widest text-stone-400">
-              Dietary Information
+              {t("dietaryInfo")}
             </h3>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {item.dietaryTags.map((tag) => (
@@ -144,8 +146,7 @@ export function MenuItemDetails({
         {/* Availability */}
         {!item.isAvailable && (
           <div className="mt-5 rounded-lg border border-stone-200 bg-stone-50 px-4 py-3 text-xs text-stone-500">
-            This dish is currently unavailable. Please ask your server for
-            today&apos;s alternative.
+            {t("currentlyUnavailable")}
           </div>
         )}
 
@@ -185,8 +186,8 @@ export function MenuItemDetails({
               className="inline-flex h-12 flex-1 items-center justify-center rounded-sm bg-stone-900 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-brand disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-stone-900"
             >
               {item.isAvailable
-                ? `Add to Cart · ${formatMoney(item.price * quantity, currency)}`
-                : "Currently Unavailable"}
+                ? t("addToCart", { price: formatMoney(item.price * quantity, currency) })
+                : t("unavailable")}
             </button>
           </div>
         </div>

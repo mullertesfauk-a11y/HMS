@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cinzel, Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,10 +35,12 @@ export const metadata: Metadata = {
   description: "Experience luxury and warm hospitality at Gurja Hotel.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${cinzel.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

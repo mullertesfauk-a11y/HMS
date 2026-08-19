@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { ReservationLookup } from "@/components/website/reservation-lookup";
 
-export const metadata: Metadata = {
-  title: "Find my booking",
-  description: "Look up your reservation by booking number and last name.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return {
+    title: t("lookupTitle"),
+    description: t("lookupDescription"),
+  };
+}
 
-export default function LookupPage() {
+export default async function LookupPage() {
+  const t = await getTranslations("reservation");
+
   return (
     <div className="bg-surface min-h-[calc(100vh-200px)]">
       <div className="bg-stone-950 py-16 sm:py-24">
         <div className="mx-auto w-full max-w-3xl px-4 sm:px-8 text-center">
-          <h1 className="font-display text-4xl text-white sm:text-5xl">Manage your stay</h1>
+          <h1 className="font-display text-4xl text-white sm:text-5xl">{t("manageStay")}</h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-stone-300">
-            Enter your reservation number and last name to view details or cancel your booking.
+            {t("lookupDesc")}
           </p>
         </div>
       </div>

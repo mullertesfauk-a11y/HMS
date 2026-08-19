@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ShoppingBag } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { MenuCategory, MenuItem } from "@/lib/menu/menu-types";
 import { CATEGORY_ALL } from "@/lib/menu/menu-types";
 import { formatMoney } from "@/lib/utils/display";
@@ -26,6 +27,7 @@ export function MenuBrowser({
   currency: string;
   taxRate: number;
 }) {
+  const t = useTranslations("menu");
   const [activeCategory, setActiveCategory] = React.useState(CATEGORY_ALL);
   const [query, setQuery] = React.useState("");
   const [selectedItem, setSelectedItem] = React.useState<MenuItem | null>(null);
@@ -175,14 +177,14 @@ export function MenuBrowser({
           >
             <span className="flex items-center gap-2.5 text-sm font-semibold">
               <ShoppingBag className="h-4 w-4" />
-              {itemCount} {itemCount === 1 ? "item" : "items"}
+              {t("itemCount", { count: itemCount })}
             </span>
             <span className="flex items-center gap-3">
               <span className="text-sm font-bold">
                 {formatMoney(cartTotal, currency)}
               </span>
               <span className="rounded-full bg-white/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest">
-                View Order
+                {t("viewOrder")}
               </span>
             </span>
           </button>

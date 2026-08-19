@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import type { PublicHotel } from "@/server/services/hotel.service";
 import { HotelLogo } from "@/components/ui/hotel-logo";
 import { SiteNav } from "@/components/website/site-nav";
+import { LanguageSelector } from "@/components/website/language-selector";
 import { cn } from "@/lib/utils/cn";
 
 /**
@@ -15,6 +17,8 @@ import { cn } from "@/lib/utils/cn";
  * app-style header takes center stage.
  */
 export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
+  const tNav = useTranslations("nav");
+
   return (
     <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 backdrop-blur-md transition-all duration-300">
       <div className="mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-4 sm:px-8">
@@ -30,11 +34,12 @@ export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
         <SiteNav className="hidden items-center gap-6 md:flex" />
 
         <div className="flex items-center gap-3 sm:gap-4">
+          <LanguageSelector className="hidden lg:block" />
           <Link
             href="/admin/login"
             className="hidden text-xs font-medium uppercase tracking-widest text-stone-400 transition-colors hover:text-foreground lg:block"
           >
-            Staff
+            {tNav("staff")}
           </Link>
           <Link
             href="/rooms"
@@ -48,7 +53,10 @@ export function SiteHeader({ hotel }: { hotel: PublicHotel }) {
 
       {/* Mobile main navigation bar */}
       <nav aria-label="Main navigation (mobile)" className="border-t border-stone-100 bg-white md:hidden">
-        <SiteNav className="mx-auto flex w-full items-center justify-center gap-4 px-4 py-2.5" />
+        <div className="mx-auto flex w-full items-center justify-between gap-4 px-4 py-2.5">
+          <SiteNav className="flex items-center justify-center gap-4" />
+          <LanguageSelector />
+        </div>
       </nav>
     </header>
   );

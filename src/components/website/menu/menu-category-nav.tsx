@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils/cn";
 import type { MenuCategory } from "@/lib/menu/menu-types";
 import { CATEGORY_ALL } from "@/lib/menu/menu-types";
+import { useTranslations } from "next-intl";
 
 export function MenuCategoryNav({
   categories,
@@ -13,8 +14,9 @@ export function MenuCategoryNav({
   active: string;
   onSelect: (id: string) => void;
 }) {
+  const t = useTranslations("menu");
   const allCategories = [
-    { id: CATEGORY_ALL, name: "All", nameAm: "ሁሉም" },
+    { id: CATEGORY_ALL, name: t("allCategories"), nameAm: "ሁሉም" },
     ...categories,
   ];
 

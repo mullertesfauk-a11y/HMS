@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { CalendarDays, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,8 @@ import type { PublicReservationView } from "@/server/services/reservation.view";
  * privacy gate, matching the public API.
  */
 export function ReservationLookup() {
+  const t = useTranslations("reservation");
+  const tCommon = useTranslations("common");
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [reservation, setReservation] = useState<PublicReservationView | null>(null);
@@ -64,7 +67,7 @@ export function ReservationLookup() {
         <div className="grid gap-6 sm:grid-cols-2">
           <Input
             name="reservationNumber"
-            label="Reservation Number"
+            label={t("reservationNumber")}
             required
             placeholder="HTL-2026-XXXXXX"
             value={reservationNumber}
@@ -72,7 +75,7 @@ export function ReservationLookup() {
           />
           <Input
             name="lastName"
-            label="Last Name"
+            label={t("lastName")}
             required
             autoComplete="family-name"
             placeholder="e.g. Doe"
@@ -90,7 +93,7 @@ export function ReservationLookup() {
         <div className="mt-8 flex justify-end">
           <Button type="submit" loading={pending} size="lg" className="w-full sm:w-auto h-12">
             <Search aria-hidden className="mr-2 h-4 w-4" />
-            {pending ? "Looking up…" : "Find Reservation"}
+            {pending ? t("lookingUp") : t("findReservation")}
           </Button>
         </div>
       </form>
@@ -100,7 +103,7 @@ export function ReservationLookup() {
           <div className="flex flex-wrap items-end justify-between gap-4 border-b border-stone-200 pb-8">
             <div>
               <p className="text-sm font-semibold uppercase tracking-widest text-stone-400">
-                Reservation Details
+                {t("reservationDetails")}
               </p>
               <p className="mt-2 font-display text-4xl text-foreground">
                 {reservation.reservationNumber}
@@ -112,19 +115,19 @@ export function ReservationLookup() {
           <div className="mt-8 grid gap-12 sm:grid-cols-2">
             <dl className="space-y-6 text-sm text-stone-600">
               <div>
-                <dt className="text-xs uppercase tracking-widest text-stone-400">Guest Name</dt>
+                <dt className="text-xs uppercase tracking-widest text-stone-400">{t("guestName")}</dt>
                 <dd className="mt-1 font-medium text-foreground text-base">
                   {reservation.guest.firstName} {reservation.guest.lastName}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-widest text-stone-400">Room Type</dt>
+                <dt className="text-xs uppercase tracking-widest text-stone-400">{t("roomType")}</dt>
                 <dd className="mt-1 font-medium text-foreground text-base">
                   {reservation.rooms[0]?.roomType.name ?? "—"}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-widest text-stone-400">Total Price</dt>
+                <dt className="text-xs uppercase tracking-widest text-stone-400">{t("totalPrice")}</dt>
                 <dd className="mt-1 font-display text-2xl text-foreground">
                   {formatMoney(reservation.pricing.total, reservation.pricing.currency)}
                 </dd>
@@ -133,20 +136,20 @@ export function ReservationLookup() {
 
             <dl className="space-y-6 text-sm text-stone-600">
               <div>
-                <dt className="text-xs uppercase tracking-widest text-stone-400">Stay Dates</dt>
+                <dt className="text-xs uppercase tracking-widest text-stone-400">{t("stayDates")}</dt>
                 <dd className="mt-1 font-medium text-foreground text-base flex items-center gap-2">
                   <CalendarDays aria-hidden className="h-4 w-4 text-stone-400" />
                   {formatDateFriendly(reservation.checkIn)} &mdash; {formatDateFriendly(reservation.checkOut)}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-widest text-stone-400">Duration</dt>
+                <dt className="text-xs uppercase tracking-widest text-stone-400">{t("duration")}</dt>
                 <dd className="mt-1 font-medium text-foreground text-base">
                   {reservation.nights} Night{reservation.nights !== 1 ? "s" : ""}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs uppercase tracking-widest text-stone-400">Guests</dt>
+                <dt className="text-xs uppercase tracking-widest text-stone-400">{tCommon("guests")}</dt>
                 <dd className="mt-1 font-medium text-foreground text-base">
                   {reservation.adults} Adult{reservation.adults !== 1 ? "s" : ""}
                   {reservation.children > 0
@@ -159,7 +162,7 @@ export function ReservationLookup() {
 
           {reservation.specialRequests ? (
             <div className="mt-12 bg-stone-50 p-6 ring-1 ring-stone-900/5">
-              <h4 className="text-xs font-semibold uppercase tracking-widest text-stone-500">Special Requests</h4>
+              <h4 className="text-xs font-semibold uppercase tracking-widest text-stone-500">{t("specialRequests")}</h4>
               <p className="mt-3 text-sm leading-relaxed text-stone-600">
                 {reservation.specialRequests}
               </p>
@@ -170,7 +173,7 @@ export function ReservationLookup() {
             {cancellable ? (
               <div className="flex flex-col items-center justify-between gap-6 sm:flex-row bg-stone-50 p-6 ring-1 ring-stone-900/5">
                 <p className="text-sm text-stone-600">
-                  Plans changed? You can cancel this reservation free of charge.
+                  {t("plansChanged")}
                 </p>
                 <Button
                   type="button"
@@ -179,14 +182,13 @@ export function ReservationLookup() {
                   onClick={handleCancel}
                   className="w-full sm:w-auto"
                 >
-                  Cancel Reservation
+                  {t("cancelReservation")}
                 </Button>
               </div>
             ) : (
               <div className="bg-stone-50 p-6 text-center ring-1 ring-stone-900/5">
                 <p className="text-sm text-stone-500">
-                  This reservation {statusMeta(reservation.status).label.toLowerCase()} and can no
-                  longer be cancelled online. Please contact the front desk for assistance.
+                  {t("noLongerCancellable", { status: statusMeta(reservation.status).label.toLowerCase() })}
                 </p>
               </div>
             )}

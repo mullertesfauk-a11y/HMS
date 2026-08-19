@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils/cn";
 
 export interface NavItem {
@@ -9,12 +10,15 @@ export interface NavItem {
   label: string;
 }
 
-const DEFAULT_NAV: NavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/rooms", label: "Rooms" },
-  { href: "/menu", label: "Restaurant" },
-  { href: "/reservation/lookup", label: "Find my booking" },
-];
+export function useNavItems(): NavItem[] {
+  const t = useTranslations("nav");
+  return [
+    { href: "/", label: t("home") },
+    { href: "/rooms", label: t("rooms") },
+    { href: "/menu", label: t("restaurant") },
+    { href: "/reservation/lookup", label: t("findBooking") },
+  ];
+}
 
 function isActive(pathname: string, href: string): boolean {
   if (href === "/") return pathname === "/";
@@ -22,17 +26,19 @@ function isActive(pathname: string, href: string): boolean {
 }
 
 export function SiteNav({
-  nav = DEFAULT_NAV,
+  nav,
   className,
 }: {
   nav?: NavItem[];
   className?: string;
 }) {
   const pathname = usePathname();
+  const defaultNav = useNavItems();
+  const navItems = nav ?? defaultNav;
 
   return (
     <nav aria-label="Main navigation" className={className}>
-      {nav.map((item) => (
+      {navItems.map((item) => (
         <Link
           key={item.href}
           href={item.href}

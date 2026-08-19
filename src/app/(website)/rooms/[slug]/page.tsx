@@ -15,6 +15,7 @@ import {
   Wifi,
 } from "lucide-react";
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { BookingPanel } from "@/components/website/booking-panel";
 import { AvailabilitySearch } from "@/components/website/availability-search";
@@ -53,6 +54,7 @@ export default async function RoomTypeDetailPage({
   ]);
   if (!roomType) notFound();
 
+  const t = await getTranslations("rooms");
   const parsed = availabilityQuerySchema.safeParse(rawParams);
   const hasDates = parsed.success;
 
@@ -84,7 +86,7 @@ export default async function RoomTypeDetailPage({
             className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-600 hover:text-brand transition-colors"
           >
             <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span>Back to All Rooms</span>
+            <span>{t("backToAll")}</span>
           </Link>
           <div className="hidden sm:flex items-center gap-2 text-xs text-stone-400">
             <span>Rooms</span>
@@ -157,7 +159,7 @@ export default async function RoomTypeDetailPage({
             {/* Room Narrative Description */}
             <div className="rounded-2xl border border-stone-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4">
               <h2 className="font-display text-2xl font-semibold text-stone-900">
-                About the Room
+                {t("aboutRoom")}
               </h2>
               <div className="prose prose-stone max-w-none text-sm sm:text-base leading-relaxed text-stone-600">
                 <p>
@@ -172,10 +174,10 @@ export default async function RoomTypeDetailPage({
               <div className="rounded-2xl border border-stone-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-6">
                 <div className="flex items-center justify-between border-b border-stone-100 pb-4">
                   <h2 className="font-display text-2xl font-semibold text-stone-900">
-                    Included Amenities
+                    {t("amenities")}
                   </h2>
                   <span className="text-xs font-medium text-stone-500">
-                    {roomType.amenities.length} Features included
+                    {roomType.amenities.length} {t("featuresIncluded")}
                   </span>
                 </div>
 
@@ -198,7 +200,7 @@ export default async function RoomTypeDetailPage({
             {/* Hotel Services & Hospitality Standards */}
             <div className="rounded-2xl border border-stone-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-6">
               <h2 className="font-display text-2xl font-semibold text-stone-900">
-                Hospitality Privileges
+                {t("hospitality")}
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -247,7 +249,7 @@ export default async function RoomTypeDetailPage({
             {/* Check-in & Stay Policies */}
             <div className="rounded-2xl border border-stone-200/90 bg-white p-6 sm:p-8 shadow-xs space-y-4">
               <h2 className="font-display text-2xl font-semibold text-stone-900">
-                Check-in &amp; Policies
+                {t("policies")}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-stone-600">
                 <div className="flex items-center gap-3 rounded-lg border border-stone-100 p-3.5">

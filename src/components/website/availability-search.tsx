@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CalendarDays, Search } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,8 @@ export function AvailabilitySearch({
   targetPath?: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("rooms");
+  const tCommon = useTranslations("common");
   const defaults = defaultValues();
   const [checkIn, setCheckIn] = useState(initial?.checkIn ?? defaults.checkIn);
   const [checkOut, setCheckOut] = useState(initial?.checkOut ?? defaults.checkOut);
@@ -76,7 +79,7 @@ export function AvailabilitySearch({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
           <Input
             name="checkIn"
-            label="Check-in Date"
+            label={t("checkInTime")}
             type="date"
             required
             value={checkIn}
@@ -86,7 +89,7 @@ export function AvailabilitySearch({
           />
           <Input
             name="checkOut"
-            label="Check-out Date"
+            label={t("checkOutTime")}
             type="date"
             required
             value={checkOut}
@@ -105,20 +108,20 @@ export function AvailabilitySearch({
           >
             {[1, 2, 3, 4, 5, 6].map((n) => (
               <option key={n} value={n}>
-                {n} {n === 1 ? "Adult" : "Adults"}
+                {n} {tCommon("adult")}
               </option>
             ))}
           </Select>
 
           <Select
             name="children"
-            label="Children"
+            label={tCommon("children")}
             value={children}
             onChange={(e) => setChildren(e.target.value)}
           >
             {[0, 1, 2, 3, 4].map((n) => (
               <option key={n} value={n}>
-                {n} {n === 1 ? "Child" : "Children"}
+                {n} {tCommon("child")}
               </option>
             ))}
           </Select>
@@ -129,7 +132,7 @@ export function AvailabilitySearch({
           className="w-full h-11 bg-brand hover:bg-brand-dark text-white font-semibold text-xs uppercase tracking-widest transition-all shadow-sm"
         >
           <Search aria-hidden className="h-4 w-4 mr-2" />
-          Check Availability &amp; Rates
+          {t("selectDates")}
         </Button>
       </form>
     );
@@ -145,7 +148,7 @@ export function AvailabilitySearch({
         <div className="w-full">
           <Input
             name="checkIn"
-            label="CHECK-IN"
+            label={t("checkInTime")}
             type="date"
             required
             value={checkIn}
@@ -159,7 +162,7 @@ export function AvailabilitySearch({
         <div className="w-full">
           <Input
             name="checkOut"
-            label="CHECK-OUT"
+            label={t("checkOutTime")}
             type="date"
             required
             value={checkOut}
@@ -174,29 +177,29 @@ export function AvailabilitySearch({
           <div className="w-full">
             <Select
               name="adults"
-              label="ADULTS"
-              value={adults}
-              onChange={(e) => setAdults(e.target.value)}
-            >
-              {[1, 2, 3, 4, 5, 6].map((n) => (
-                <option key={n} value={n}>
-                  {n} {n === 1 ? "Adult" : "Adults"}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="w-full">
-            <Select
-              name="children"
-              label="CHILDREN"
-              value={children}
-              onChange={(e) => setChildren(e.target.value)}
-            >
-              {[0, 1, 2, 3, 4].map((n) => (
-                <option key={n} value={n}>
-                  {n} {n === 1 ? "Child" : "Children"}
-                </option>
-              ))}
+            label={tCommon("adults")}
+            value={adults}
+            onChange={(e) => setAdults(e.target.value)}
+          >
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+              <option key={n} value={n}>
+                {n} {tCommon("adult")}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div className="w-full">
+          <Select
+            name="children"
+            label={tCommon("children")}
+            value={children}
+            onChange={(e) => setChildren(e.target.value)}
+          >
+            {[0, 1, 2, 3, 4].map((n) => (
+              <option key={n} value={n}>
+                {n} {tCommon("child")}
+              </option>
+            ))}
             </Select>
           </div>
         </div>
@@ -209,7 +212,7 @@ export function AvailabilitySearch({
             className="h-11 sm:h-12 w-full whitespace-nowrap bg-brand px-7 text-xs font-semibold uppercase tracking-widest text-white shadow-md transition-all duration-300 hover:bg-brand-dark hover:shadow-lg lg:w-auto"
           >
             <Search aria-hidden className="h-4 w-4 mr-2 shrink-0" />
-            <span>Check Rates</span>
+            <span>{t("selectDates")}</span>
           </Button>
         </div>
       </div>
@@ -217,11 +220,11 @@ export function AvailabilitySearch({
       <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-stone-100 pt-3 text-[11px] sm:text-xs text-stone-500">
         <div className="flex items-center gap-1.5 text-center sm:text-left">
           <CalendarDays aria-hidden className="h-3.5 w-3.5 text-brand-brass shrink-0" />
-          <span>Guaranteed best rates direct &bull; Instant confirmation</span>
+          <span>{tCommon("taxesIncluded")} &bull; {tCommon("instantConfirmation")}</span>
         </div>
         <div className="flex items-center gap-3 text-stone-400 text-[10px] sm:text-[11px]">
-          <span>✦ No booking fees</span>
-          <span>✦ Flexible check-in</span>
+          <span>✦ {tCommon("payOnArrival")}</span>
+          <span>✦ {tCommon("instantConfirmation")}</span>
         </div>
       </div>
     </form>

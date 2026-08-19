@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import { MenuHero } from "@/components/website/menu/menu-hero";
 import { MenuBrowser } from "@/components/website/menu/menu-browser";
@@ -15,8 +16,10 @@ export const metadata: Metadata = {
 };
 
 export default async function MenuPage() {
-  const hotel = await hotelService.getPublicHotel();
-  const menu = await menuService.getPublicMenu();
+  const [hotel, menu] = await Promise.all([
+    hotelService.getPublicHotel(),
+    menuService.getPublicMenu(),
+  ]);
 
   return (
     <div className="bg-surface">

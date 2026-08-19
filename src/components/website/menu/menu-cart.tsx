@@ -2,6 +2,7 @@
 
 import React from "react";
 import { CheckCircle2, Minus, Plus, Trash2, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { formatMoney } from "@/lib/utils/display";
 import { placeOrder } from "@/app/(website)/actions";
@@ -38,6 +39,8 @@ export function MenuCart({
   onClear: () => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("menu");
+  const tCommon = useTranslations("common");
   const ref = React.useRef<HTMLDialogElement>(null);
   const [step, setStep] = React.useState<Step>("review");
   const [guestName, setGuestName] = React.useState("");
@@ -112,12 +115,12 @@ export function MenuCart({
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-4 sm:px-6">
         <h2 id="menu-cart-title" className="font-luxury text-lg font-semibold uppercase tracking-wider text-stone-900">
-          {step === "confirmed" ? "Order Confirmed" : "Your Order"}
+          {step === "confirmed" ? t("orderConfirmed") : t("yourOrder")}
         </h2>
         <button
           type="button"
           onClick={onClose}
-          aria-label="Close cart"
+          aria-label={tCommon("close")}
           className="inline-flex h-9 w-9 items-center justify-center rounded-full text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
         >
           <X className="h-5 w-5" />
@@ -128,13 +131,13 @@ export function MenuCart({
         <div className="flex flex-1 flex-col">
           {lines.length === 0 ? (
             <div className="flex flex-1 flex-col items-center justify-center gap-3 py-16 text-center">
-              <p className="text-sm text-stone-500">Your cart is empty.</p>
+              <p className="text-sm text-stone-500">{t("cartEmpty")}</p>
               <button
                 type="button"
                 onClick={handleDone}
                 className="rounded-full border border-stone-200 px-5 py-2 text-xs font-semibold uppercase tracking-widest text-stone-700 transition-colors hover:border-stone-400"
               >
-                Back to Menu
+                {t("backToMenu")}
               </button>
             </div>
           ) : (
@@ -145,7 +148,7 @@ export function MenuCart({
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-stone-900">{line.name}</p>
                       <p className="mt-0.5 text-xs text-stone-500">
-                        {formatMoney(line.price, currency)} each
+                        {formatMoney(line.price, currency)} {t("each")}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 rounded-full border border-stone-200 px-1 py-0.5">
@@ -187,15 +190,15 @@ export function MenuCart({
               {/* Totals */}
               <div className="space-y-1.5 border-t border-stone-200 px-5 py-4 text-sm sm:px-6">
                 <div className="flex justify-between text-stone-500">
-                  <span>Subtotal</span>
+                  <span>{t("subtotal")}</span>
                   <span>{formatMoney(subtotal, currency)}</span>
                 </div>
                 <div className="flex justify-between text-stone-500">
-                  <span>Tax</span>
+                  <span>{t("tax")}</span>
                   <span>{formatMoney(tax, currency)}</span>
                 </div>
                 <div className="flex justify-between pt-1 text-base font-bold text-stone-900">
-                  <span>Total</span>
+                  <span>{t("total")}</span>
                   <span>{formatMoney(total, currency)}</span>
                 </div>
                 <button
@@ -203,7 +206,7 @@ export function MenuCart({
                   onClick={() => setStep("checkout")}
                   className="mt-3 inline-flex h-12 w-full items-center justify-center rounded-sm bg-stone-900 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-brand"
                 >
-                  Continue to Checkout
+                  {t("continueToCheckout")}
                 </button>
               </div>
             </>
@@ -216,7 +219,7 @@ export function MenuCart({
           <div className="space-y-4">
             <div>
               <label htmlFor="cart-name" className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-stone-400">
-                Your Name
+                {t("yourName")}
               </label>
               <input
                 id="cart-name"
@@ -229,7 +232,7 @@ export function MenuCart({
             </div>
             <div>
               <label htmlFor="cart-phone" className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-stone-400">
-                Phone Number
+                {t("phoneNumber")}
               </label>
               <input
                 id="cart-phone"
@@ -242,7 +245,7 @@ export function MenuCart({
             </div>
             <div>
               <label htmlFor="cart-notes" className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-stone-400">
-                Delivery Notes <span className="font-normal normal-case tracking-normal text-stone-300">(optional)</span>
+                {t("deliveryNotes")} <span className="font-normal normal-case tracking-normal text-stone-300">({tCommon("optional")})</span>
               </label>
               <textarea
                 id="cart-notes"
@@ -264,15 +267,15 @@ export function MenuCart({
           <div className="mt-auto pt-6">
             <div className="space-y-1.5 border-t border-stone-200 pt-4 text-sm">
               <div className="flex justify-between text-stone-500">
-                <span>Subtotal</span>
+                <span>{t("subtotal")}</span>
                 <span>{formatMoney(subtotal, currency)}</span>
               </div>
               <div className="flex justify-between text-stone-500">
-                <span>Tax</span>
+                <span>{t("tax")}</span>
                 <span>{formatMoney(tax, currency)}</span>
               </div>
               <div className="flex justify-between pt-1 text-base font-bold text-stone-900">
-                <span>Total</span>
+                <span>{t("total")}</span>
                 <span>{formatMoney(total, currency)}</span>
               </div>
             </div>
@@ -282,7 +285,7 @@ export function MenuCart({
                 onClick={() => setStep("review")}
                 className="inline-flex h-12 items-center justify-center rounded-sm border border-stone-200 px-5 text-xs font-semibold uppercase tracking-widest text-stone-600 transition-colors hover:border-stone-400"
               >
-                Back
+                {t("backButton")}
               </button>
               <button
                 type="button"
@@ -290,11 +293,11 @@ export function MenuCart({
                 disabled={placing || !guestName.trim() || !guestPhone.trim()}
                 className="inline-flex h-12 flex-1 items-center justify-center rounded-sm bg-stone-900 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-brand disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-stone-900"
               >
-                {placing ? "Placing Order…" : "Place Order"}
+                {placing ? t("placingOrder") : t("placeOrder")}
               </button>
             </div>
             <p className="mt-3 text-center text-[11px] text-stone-400">
-              Pay on delivery or at the counter. We&apos;ll call this number to confirm.
+              {t("payOnDelivery")}
             </p>
           </div>
         </div>
@@ -304,21 +307,20 @@ export function MenuCart({
         <div className="flex flex-1 flex-col items-center px-5 pb-8 pt-10 text-center sm:px-6">
           <CheckCircle2 className="h-12 w-12 text-emerald-500" />
           <h3 className="mt-4 font-luxury text-2xl font-semibold text-stone-900">
-            Order Placed
+            {t("orderPlaced")}
           </h3>
           <p className="mt-2 text-sm leading-relaxed text-stone-500">
-            Thank you, {confirmedOrder.guestName.split(" ")[0]}. Your order is
-            being prepared and will be confirmed by phone shortly.
+            {t("orderThankYou", { name: confirmedOrder.guestName.split(" ")[0] })}
           </p>
           <div className="mt-6 w-full rounded-xl border border-stone-200 bg-stone-50 px-5 py-4">
             <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-400">
-              Order Number
+              {t("orderNumber")}
             </p>
             <p className="mt-1 font-mono text-xl font-bold tracking-wide text-stone-900">
               {confirmedOrder.orderNumber}
             </p>
             <p className="mt-2 text-sm text-stone-500">
-              Total due on delivery:{" "}
+              {t("totalDueOnDelivery")}:{" "}
               <span className="font-semibold text-stone-900">
                 {formatMoney(confirmedOrder.pricing.total, confirmedOrder.pricing.currency)}
               </span>
@@ -329,7 +331,7 @@ export function MenuCart({
             onClick={handleDone}
             className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-sm bg-stone-900 text-xs font-semibold uppercase tracking-widest text-white transition-colors hover:bg-brand"
           >
-            Done
+            {tCommon("done")}
           </button>
         </div>
       )}
