@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 
 import { SiteFooter } from "@/components/website/site-footer";
 import { SiteHeader } from "@/components/website/site-header";
 import { hotelService } from "@/server/services/hotel.service";
 import { I18nProvider } from "@/i18n/provider";
+import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
   title: {
@@ -14,7 +18,19 @@ export const metadata: Metadata = {
     "Book your stay at Gurja Hotel — luxury suites, city views, and timeless Ethiopian hospitality.",
 };
 
-export default async function WebsiteLayout({ children }: { children: React.ReactNode }) {
+export default async function LocaleLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+  setRequestLocale(locale);
+
   const hotel = await hotelService.getPublicHotel();
 
   return (

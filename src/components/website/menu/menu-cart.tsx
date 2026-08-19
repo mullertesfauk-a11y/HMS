@@ -5,7 +5,7 @@ import { CheckCircle2, Minus, Plus, Trash2, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { formatMoney } from "@/lib/utils/display";
-import { placeOrder } from "@/app/(website)/actions";
+import { placeOrder } from "@/app/[locale]/(website)/actions";
 import type { PublicOrderView } from "@/server/services/order.view";
 
 export interface CartLine {

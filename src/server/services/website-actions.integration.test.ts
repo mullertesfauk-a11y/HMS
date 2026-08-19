@@ -5,7 +5,7 @@ import {
   cancelReservation,
   createBooking,
   lookupReservation,
-} from "@/app/(website)/actions";
+} from "@/app/[locale]/(website)/actions";
 
 const describeDb = process.env.DATABASE_URL ? describe : describe.skip;
 

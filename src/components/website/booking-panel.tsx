@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { statusMeta } from "@/lib/domain/labels";
 import { formatDateFriendly, formatMoney } from "@/lib/utils/display";
-import { createBooking } from "@/app/(website)/actions";
+import { createBooking } from "@/app/[locale]/(website)/actions";
 import type { PublicReservationView } from "@/server/services/reservation.view";
 
 export interface BookingPanelProps {

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
 
 import { MenuHero } from "@/components/website/menu/menu-hero";
 import { MenuBrowser } from "@/components/website/menu/menu-browser";

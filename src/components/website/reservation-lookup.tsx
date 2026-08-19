@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { statusMeta } from "@/lib/domain/labels";
 import { formatDateFriendly, formatMoney } from "@/lib/utils/display";
-import { cancelReservation, lookupReservation } from "@/app/(website)/actions";
+import { cancelReservation, lookupReservation } from "@/app/[locale]/(website)/actions";
 import type { PublicReservationView } from "@/server/services/reservation.view";
 
 /**
